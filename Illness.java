@@ -5,8 +5,10 @@ import java.util.Scanner;
 
 
 public class Illness {
-public Illness{
 	String name;
+	ArrayList<String> my;
+public Illness{
+	String name = "";
 	ArrayList<String> my = new ArrayList<String>();
 }
 public String getname(String name) {
