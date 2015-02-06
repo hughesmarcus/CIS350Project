@@ -6,6 +6,8 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -14,14 +16,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+
 import org.eclipse.wb.swing.FocusTraversalOnArray;
+
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.ListSelectionModel;
 
 public class MedGui {
 
-	private JFrame frame;
-	private JTextField textField;
-	private JTabbedPane tabbedPane;
-	private JTextField textField_1;
+	private static JFrame frame;
+	private JTextField nameField;
+	private static JTabbedPane tabbedPane;
+	private JTextField searchField;
+	static JPanel recordPanel;
+	JPanel searchPanel;
+	static JPanel patientsPanel;
 
 	/**
 	 * Launch the application.
@@ -31,7 +43,9 @@ public class MedGui {
 			public void run() {
 				try {
 					MedGui window = new MedGui();
-					window.frame.setVisible(true);
+					
+					LoginDialog login = new LoginDialog();
+					login.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -46,148 +60,153 @@ public class MedGui {
 		initialize();
 	}
 
+	public static void showFrame()
+	{
+		frame.setVisible(true);
+	}
+	
+	public static void doctorView()
+	{
+		tabbedPane.addTab("Record", null, recordPanel, null);
+		tabbedPane.addTab("Patients", null, patientsPanel, null);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame("MediApp");
-		frame.setBounds(100, 100, 399, 382);
+		frame.setResizable(false);
+		frame.setBounds(100, 100, 398, 413);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-		
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setFont(new Font("Dialog", Font.BOLD, 12));
 		tabbedPane.setToolTipText("");
-		tabbedPane.setBounds(2, 0, 375, 342);
+		tabbedPane.setBounds(2, 0, 388, 382);
 		frame.getContentPane().add(tabbedPane);
+		frame.setVisible(false);
 		
-		JTextArea textArea_1 = new JTextArea();
+		JTextArea sympTxtArea = new JTextArea();
+		sympTxtArea.setLineWrap(true);
+		sympTxtArea.setWrapStyleWord(true);
 		
-		JPanel panel = new JPanel();
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Record", null, panel, null);
-		//tabbedPane.addTab("Search", null, panel_1, null);
-		panel.setLayout(null);
-		
-		JLabel label = new JLabel("Name:");
-		label.setBounds(45, 13, 47, 20);
-		label.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		panel.add(label);
-		
-		textField = new JTextField();
-		textField.setBounds(110, 8, 228, 33);
-		textField.setColumns(10);
-		panel.add(textField);
-		
-		JLabel label_1 = new JLabel("Symptoms:");
-		label_1.setBounds(12, 53, 81, 20);
-		label_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		panel.add(label_1);
-		
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(271, 10, 0, 16);
-		panel.add(textArea);
-		
-		JButton clrBtn = new JButton("Clear");
-		clrBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-					textArea_1.setText("");
-					textField.setText("");
-			}
-		});
-		clrBtn.setBounds(224, 261, 72, 33);
-		panel.add(clrBtn);
-		
-		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(129, 261, 72, 33);
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//read symptoms into an array
-				String symps = textArea_1.getText();
-				symps += ",";
-				ArrayList<String> symptoms = new ArrayList<String>();
-				for(int i = 0; i < symps.length(); i++)
-				{
-					//symptoms are seperated either by a comma or a return
-					if(symps.charAt(i) == '\n' || symps.charAt(i) == ',')
-					{
-						//when there is a comma then a return
-						if(symps.length() > 1 && i > symps.length())
-						{
-							if(symps.charAt(i+1) == '\n' && symps.charAt(i) == ',')
-							{
-								//read what is from the beginning of the string to the comma
-								String next = symps.substring(0, i).trim();
-								symptoms.add(next);
-								symps = symps.substring(i + 2).trim();
-								i = 0;
-							}
-						}
-						else
-						{
-							//read what is from the beginning of the string to the return or comma.
-							String next = symps.substring(0, i).trim();
-							symptoms.add(next);
-							symps = symps.substring(i + 1).trim();
-							i = 0;
-						}
-						
-					}
-				}
-				for(int f = 0; f < symptoms.size(); f++)
-				{
-					System.out.println(symptoms.get(f));
-				}
-				//create new illness
-				//call save method
-			}
-		});
-		panel.add(btnSave);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(110, 52, 231, 196);
-		panel.add(scrollPane);
-		
-		scrollPane.setViewportView(textArea_1);
-		panel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{scrollPane, textArea, textArea_1, label_1, btnSave, clrBtn, label, textField}));
+		recordPanel = new JPanel();
+		searchPanel = new JPanel();
+		patientsPanel = new JPanel();
+		tabbedPane.addTab("Search", null, searchPanel, null);
 		
 		
-		panel_1.setBounds(405, 25, 354, 317);
-		//frame.getContentPane().add(panel_1);
-		panel_1.setLayout(null);
+		searchPanel.setBounds(405, 25, 354, 317);
+		searchPanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Search: ");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblNewLabel.setBounds(42, 13, 58, 28);
-		panel_1.add(lblNewLabel);
+		JLabel searchLbl = new JLabel("Search: ");
+		searchLbl.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		searchLbl.setBounds(42, 59, 58, 28);
+		searchPanel.add(searchLbl);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(110, 8, 228, 33);
-		panel_1.add(textField_1);
-		textField_1.setColumns(10);
+		searchField = new JTextField();
+		searchField.setBounds(110, 54, 228, 33);
+		searchPanel.add(searchField);
+		searchField.setColumns(10);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(110, 52, 231, 196);
-		panel_1.add(scrollPane_1);
+		JScrollPane resultScrlPn = new JScrollPane();
+		resultScrlPn.setBounds(110, 98, 231, 196);
+		searchPanel.add(resultScrlPn);
 		
-		JTextArea textArea_2 = new JTextArea();
-		scrollPane_1.setViewportView(textArea_2);
+		JTextArea txtrILikeTo = new JTextArea();
+		txtrILikeTo.setWrapStyleWord(true);
+		txtrILikeTo.setLineWrap(true);
+		resultScrlPn.setViewportView(txtrILikeTo);
 		
 		JLabel lblResults = new JLabel("Results:");
 		lblResults.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblResults.setBounds(42, 49, 64, 29);
-		panel_1.add(lblResults);
+		lblResults.setBounds(42, 95, 64, 29);
+		searchPanel.add(lblResults);
 		
 		JButton btnSearch = new JButton("Search");
-		btnSearch.setBounds(129, 261, 72, 33);
-		panel_1.add(btnSearch);
+		btnSearch.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnSearch.setBounds(129, 307, 72, 33);
+		searchPanel.add(btnSearch);
 		
-		JButton button_2 = new JButton("Clear");
-		button_2.setBounds(224, 261, 72, 33);
-		panel_1.add(button_2);
+		JButton btnClear = new JButton("Clear");
+		btnClear.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnClear.setBounds(224, 307, 72, 33);
+		searchPanel.add(btnClear);
+		String[] searchOptions = {"Symptom", "Illness"};
+		JComboBox searchOptBox = new JComboBox(searchOptions);
+		searchOptBox.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		searchOptBox.setEditable(false);
+		searchOptBox.setBounds(110, 12, 127, 26);
+		searchPanel.add(searchOptBox);
+		
+		JLabel lblSearchOptions = new JLabel("Search for");
+		lblSearchOptions.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblSearchOptions.setBounds(20, 11, 80, 28);
+		searchPanel.add(lblSearchOptions);
+		recordPanel.setLayout(null);
+		
+		String[] patients = getPatients();
+		patientsPanel.setLayout(null);
+		JList patientList = new JList(patients);
+		patientList.setBounds(10, 11, 130, 330);
+		patientList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		patientList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		patientsPanel.add(patientList);
+		
+		JLabel lblName = new JLabel("Name:");
+		lblName.setBounds(45, 13, 47, 20);
+		lblName.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		recordPanel.add(lblName);
+		
+		nameField = new JTextField();
+		nameField.setBounds(110, 8, 228, 33);
+		nameField.setColumns(10);
+		recordPanel.add(nameField);
+		
+		JLabel lblSymptoms = new JLabel("Symptoms:");
+		lblSymptoms.setBounds(12, 53, 81, 20);
+		lblSymptoms.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		recordPanel.add(lblSymptoms);
+		
+		JButton clrBtn = new JButton("Clear");
+		clrBtn.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		clrBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					sympTxtArea.setText("");
+					nameField.setText("");
+			}
+		});
+		clrBtn.setBounds(224, 261, 72, 33);
+		recordPanel.add(clrBtn);
+		
+		JButton btnSave = new JButton("Save");
+		btnSave.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnSave.setBounds(129, 261, 72, 33);
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String symps = sympTxtArea.getText();
+				
+				//pass the symptoms and name to the save method to be added to the database
+			}
+		});
+		recordPanel.add(btnSave);
+		
+		JScrollPane sympScrlPn = new JScrollPane();
+		sympScrlPn.setBounds(110, 52, 231, 196);
+		recordPanel.add(sympScrlPn);
+		
+		sympScrlPn.setViewportView(sympTxtArea);
+		recordPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{sympScrlPn, sympTxtArea, lblSymptoms, btnSave, clrBtn, lblName, nameField}));
 	}
 
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
+	}
+	
+	public String[] getPatients()
+	{
+		String[] p = {"Vincent, Silas", "Mersino, Chad", "Hughes, Marcus"};
+		return p;
 	}
 }
