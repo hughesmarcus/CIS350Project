@@ -3,21 +3,41 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-
 public class Illness {
-	String name;
-	ArrayList<String> my;
-public Illness{
-	String name = "";
-	ArrayList<String> my = new ArrayList<String>();
-}
-public String getname(String name) {
-	return name;
-}
-public void addsymptom(String symptom){
-	
-	my.add(symptom);
-	
-}
+	private String illname;
+	private String treatment;
+	private ArrayList<String> symptom;
+
+	public Illness(String ill, String treat) {
+		illname = ill;
+		treatment = treat;
+
+	}
+
+	public String getillname() {
+		return illname;
+	}
+
+	public void setillname(String illname) {
+		this.illname = illname;
+	}
+
+	public String gettreatment() {
+		return treatment;
+	}
+
+	public void settreatment(String treatment) {
+		this.treatment = treatment;
+	}
+
+	public ArrayList<String> getSymptoms() {
+		return symptom;
+	}
+
+	public void addsymptom(String sym) {
+
+		symptom.add(sym);
+
+	}
 
 };
