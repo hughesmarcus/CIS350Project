@@ -63,7 +63,7 @@ public class Patient {
 		insurance = insur;
 	}
 	
-	public void addSymptom(String symp)
+	public boolean addSymptom(String symp)
 	{
 		boolean has = false;
 		for(int i = 0; i < symptoms.size(); i++)
@@ -79,5 +79,23 @@ public class Patient {
 			//if the patient does not have that symptom
 			symptoms.add(symp);
 		}
+		return has;
+	}
+	
+	public boolean addIllness(String ill)
+	{
+		boolean has = false;
+		for(int i = 0; i < ills.size(); i++)
+		{
+			if(ills.get(i) == ill)
+			{
+				has = true;
+			}
+		}
+		if(!has)
+		{
+			symptoms.add(ill);
+		}
+		return has;
 	}
 }
