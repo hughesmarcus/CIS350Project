@@ -3,7 +3,7 @@ public class Doctor {
 	private String dID;
 	private String fName;
 	private String lName;
-	private ArrayList<String> Patients;
+	private ArrayList<Patient> Patients;
 	
 	public Doctor(String id, String first, String last)
 	{
@@ -33,9 +33,27 @@ public class Doctor {
 		return lName;
 	}
 	
-	public ArrayList<String> getPatients() {
+	public ArrayList<Patient> getPatients() {
 		return Patients;
 	}
+	public boolean addPatients(Patient pat){
+		
+		boolean has = false;
+		for(int i = 0; i < Patients.size(); i++)
+		{
+			if(Patients.get(i) == pat)
+			{
+				has = true;
+			}
+		}
+		if(!has)
+		{
+			Patients.add(pat);
+		}
+		return has;
+		
+	}
 }
+
 
 
