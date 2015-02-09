@@ -34,6 +34,7 @@ public class MedGui {
 	static JPanel recordPanel;
 	JPanel searchPanel;
 	static JPanel patientsPanel;
+	JPanel profilePanel;
 
 	/**
 	 * Launch the application.
@@ -94,7 +95,24 @@ public class MedGui {
 		recordPanel = new JPanel();
 		searchPanel = new JPanel();
 		patientsPanel = new JPanel();
+		profilePanel = new JPanel();
 		tabbedPane.addTab("Search", null, searchPanel, null);
+		tabbedPane.addTab("Profile", null, profilePanel, null);
+		profilePanel.setLayout(null);
+		
+		JLabel lblName_1 = new JLabel("Name: ");
+		lblName_1.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblName_1.setBounds(10, 11, 300, 28);
+		profilePanel.add(lblName_1);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 73, 150, 270);
+		profilePanel.add(scrollPane);
+		
+		JTextArea textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		scrollPane.setViewportView(textArea);
+		textArea.setWrapStyleWord(true);
 		
 		
 		searchPanel.setBounds(405, 25, 354, 317);
@@ -149,10 +167,40 @@ public class MedGui {
 		String[] patients = getPatients();
 		patientsPanel.setLayout(null);
 		JList patientList = new JList(patients);
+		patientList.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		patientList.setBounds(10, 11, 130, 330);
 		patientList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		patientList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		patientsPanel.add(patientList);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(150, 183, 223, 160);
+		patientsPanel.add(scrollPane_1);
+		
+		JTextArea textArea_1 = new JTextArea();
+		textArea_1.setFont(new Font("Monospaced", Font.PLAIN, 13));
+		textArea_1.setWrapStyleWord(true);
+		textArea_1.setLineWrap(true);
+		scrollPane_1.setViewportView(textArea_1);
+		
+		JLabel lblNewLabel = new JLabel("Profile");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblNewLabel.setBounds(150, 155, 55, 20);
+		patientsPanel.add(lblNewLabel);
+		
+		JButton btnAddSymptom = new JButton("Add Symptom");
+		btnAddSymptom.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnAddSymptom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnAddSymptom.setBounds(150, 11, 110, 33);
+		patientsPanel.add(btnAddSymptom);
+		
+		JButton btnAddIllness = new JButton("Add Illness");
+		btnAddIllness.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnAddIllness.setBounds(150, 55, 110, 33);
+		patientsPanel.add(btnAddIllness);
 		
 		JLabel lblName = new JLabel("Name:");
 		lblName.setBounds(45, 13, 47, 20);
@@ -198,6 +246,8 @@ public class MedGui {
 		
 		sympScrlPn.setViewportView(sympTxtArea);
 		recordPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{sympScrlPn, sympTxtArea, lblSymptoms, btnSave, clrBtn, lblName, nameField}));
+		
+
 	}
 
 	public JTabbedPane getTabbedPane() {
