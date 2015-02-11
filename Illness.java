@@ -34,7 +34,7 @@ public class Illness {
 		return symptom;
 	}
 
-	public void addsymptom(String sym) {
+	public void addisymptom(String sym) {
 
 		symptom.add(sym);
 

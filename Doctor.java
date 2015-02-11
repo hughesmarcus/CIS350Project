@@ -19,17 +19,17 @@ public class Doctor {
 	public void setdID(String dID) {
 		this.dID = dID;
 	}
-	public void setfName(String fName) {
+	public void setdfName(String fName) {
 		this.fName = fName;
 	}
-	public void setlName(String lName) {
+	public void setdlName(String lName) {
 		this.lName = lName;
 	}
 	
-	public String getfName() {
+	public String getdfName() {
 		return fName;
 	}
-	public String getlName() {
+	public String getdlName() {
 		return lName;
 	}
 	
