@@ -83,7 +83,6 @@ public class DBAccess
 			ResultSet res = st.executeQuery("SELECT Illness_Name FROM illness WHERE Symptom = '" + symptom + "';"); 
 			while (res.next()) 
 			{
-				//use getString on the result of the query
 				String ill = res.getString("Illness_Name"); 
 				illness.add(ill);
 			} 
@@ -101,12 +100,27 @@ public class DBAccess
 	 * @param ill
 	 * @return symps
 	 */
-//	public ArrayList<String> illSearch(String ill)
-//	{
-//		ArrayList<String> symps;
-//		
-//		return symps;
-//	}
+	public ArrayList<String> illSearch(String ill)
+	{
+		ArrayList<String> symps = new ArrayList<String>();
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("SELECT Symptom FROM illness WHERE Illness_Name = '" + ill + "';"); 
+			while (res.next()) 
+			{
+				String symptom = res.getString("Symptom"); 
+				symps.add(symptom);
+			} 
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
+		return symps;
+	}
 	
 	/**
 	 * Attempts to add the illness with the given name and symptoms to the illness table
@@ -126,12 +140,12 @@ public class DBAccess
 	 * returns all the illnesses in the illness table
 	 * @return ills
 	 */
-//	public ArrayList<String> getIlls()
-//	{
-//		ArraysList<String> ills;
-//		
-//		return ills;
-//	}
+	public ArrayList<String> getIlls()
+	{
+		ArrayList<String> ills = new ArrayList<String>();
+		
+		return ills;
+	}
 	
 	/**
 	 * Searches for the given illness and adds the given symptom to it and returns
@@ -174,4 +188,3 @@ public class DBAccess
 		return del;
 	}
 }
-
