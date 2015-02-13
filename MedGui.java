@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -15,7 +16,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+
+import org.eclipse.wb.swing.DBAccess;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
+
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.border.TitledBorder;
@@ -33,6 +37,7 @@ public class MedGui {
 	static JPanel patientsPanel;
 	static JPanel editPanel;
 	private JTextField addSympField;
+	DBAccess DB;
 
 	/**
 	 * Launch the application.
@@ -41,8 +46,10 @@ public class MedGui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {			
-					LoginDialog login = new LoginDialog();
-					login.setVisible(true);
+//					LoginDialog login = new LoginDialog();
+//					login.setVisible(true);
+					
+					MedGui gui = new MedGui();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -73,6 +80,8 @@ public class MedGui {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		DB = new DBAccess();
+		
 		frame = new JFrame("MediApp");
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 450, 413);
@@ -174,10 +183,11 @@ public class MedGui {
 		resultScrlPn.setBounds(110, 98, 270, 196);
 		searchPanel.add(resultScrlPn);
 		
-		JTextArea txtrILikeTo = new JTextArea();
-		txtrILikeTo.setWrapStyleWord(true);
-		txtrILikeTo.setLineWrap(true);
-		resultScrlPn.setViewportView(txtrILikeTo);
+		JTextArea searchResultsArea = new JTextArea();
+		searchResultsArea.setWrapStyleWord(true);
+		searchResultsArea.setLineWrap(true);
+		searchResultsArea.setEditable(false);
+		resultScrlPn.setViewportView(searchResultsArea);
 		
 		JLabel lblResults = new JLabel("Results:");
 		lblResults.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -190,6 +200,12 @@ public class MedGui {
 		searchPanel.add(btnSearch);
 		
 		JButton btnClear = new JButton("Clear");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				searchResultsArea.setText("");
+				searchField.setText("");
+			}
+		});
 		btnClear.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btnClear.setBounds(258, 307, 88, 33);
 		searchPanel.add(btnClear);
@@ -204,9 +220,16 @@ public class MedGui {
 			public void actionPerformed(ActionEvent e) {
 				//determine if searching for symptom or illness
 				Object option = searchOptBox.getSelectedItem();
+				String search = searchField.getText();
 				if(option.equals("Symptom"))
 				{
-					
+					ArrayList<String> symptoms = DB.sympSearch(search);
+					String results = "";
+					for(int i = 0; i < symptoms.size(); i++)
+					{
+						results += symptoms.get(i) + "\n";
+					}
+					searchResultsArea.setText(results);
 				}
 				if(option.equals("Illness"))
 				{
@@ -274,6 +297,8 @@ public class MedGui {
 		
 		sympScrlPn.setViewportView(sympTxtArea);
 		recordPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{sympScrlPn, sympTxtArea, lblSymptoms, btnSave, clrBtn, lblName, nameField}));
+		
+		doctorView();
 	}
 
 	public JTabbedPane getTabbedPane() {
