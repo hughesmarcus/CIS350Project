@@ -15,14 +15,16 @@ import java.awt.event.WindowEvent;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 
-import java.awt.Window.Type;
+import org.eclipse.wb.swing.DBAccess;
 
+import java.awt.Window.Type;
 
 public class LoginDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textField;
 	private JPasswordField passwordField;
+	DBAccess DB;
 
 	/**
 	 * Launch the application.
@@ -41,6 +43,8 @@ public class LoginDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public LoginDialog() {
+		DB = new DBAccess();
+		
 		setAlwaysOnTop(true);
 		setType(Type.POPUP);
 		setTitle("Login");
@@ -89,15 +93,15 @@ public class LoginDialog extends JDialog {
 						//check if the username and password are valid
 						String user = textField.getText();
 						String pass = passwordField.getText();
-						
+						String type = DB.login(user, pass);
 						//determine if they belong to a doctor or a patient
-						if(user.equals("doc"))
+						if(type.equals("D"))
 						{
-							MedGui.doctorView();//record and patients tabs only get added if a doctor is logging in
 							MedGui.showFrame();
+							MedGui.doctorView();//record and patients tabs only get added if a doctor is logging in
 							setVisible(false);
 						}
-						else if(user.equals("pat"))
+						else if(type.equals("P"))
 						{
 							MedGui.showFrame();
 							setVisible(false);
