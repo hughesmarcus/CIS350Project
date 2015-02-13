@@ -68,16 +68,32 @@ public class DBAccess
 	
 	/**
 	 * Searches the illness table for illnesses with the given symptom and returns
-	 * and arraylist of all the illnesses with that symptom
+	 * an arraylist of all the illnesses with that symptom
 	 * @param symptom
 	 * @return illness
 	 */
-//	public ArrayList<String> sympSearch(String symptom)
-//	{
-//		ArrayList<String> illness;
-//		
-//		return illness;
-//	}
+	public ArrayList<String> sympSearch(String symptom)
+	{
+		ArrayList<String> illness = new ArrayList<String>();
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("SELECT Illness_Name FROM illness WHERE Symptom = '" + symptom + "';"); 
+			while (res.next()) 
+			{
+				//use getString on the result of the query
+				String ill = res.getString("Illness_Name"); 
+				illness.add(ill);
+			} 
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
+		return illness;
+	}
 	
 	/**
 	 * Searches the illness table for an illness and returns an arraylist of
@@ -158,3 +174,4 @@ public class DBAccess
 		return del;
 	}
 }
+
