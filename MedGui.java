@@ -225,18 +225,36 @@ public class MedGui {
 				{
 					ArrayList<String> symptoms = DB.sympSearch(search);
 					String results = "";
-					for(int i = 0; i < symptoms.size(); i++)
+					if(symptoms.size() < 1)
 					{
-						results += symptoms.get(i) + "\n";
+						searchResultsArea.setText("No Matching Search Results");
 					}
-					searchResultsArea.setText(results);
+					else
+					{
+						for(int i = 0; i < symptoms.size(); i++)
+						{
+							results += symptoms.get(i) + "\n";
+						}
+						searchResultsArea.setText(results);
+					}
 				}
 				if(option.equals("Illness"))
 				{
-					
+					ArrayList<String> illnesses = DB.illSearch(search);
+					String results = "";
+					if(illnesses.size() < 1)
+					{
+						searchResultsArea.setText("No Matching Search Results");
+					}
+					else
+					{
+						for(int i = 0; i < illnesses.size(); i++)
+						{
+							results += illnesses.get(i) + "\n";
+						}
+						searchResultsArea.setText(results);
+					}
 				}
-				//search for it
-				String searchFor = searchField.getText();
 			}
 		});
 		
