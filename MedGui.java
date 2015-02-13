@@ -40,9 +40,7 @@ public class MedGui {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				try {
-					MedGui window = new MedGui();
-					
+				try {			
 					LoginDialog login = new LoginDialog();
 					login.setVisible(true);
 				} catch (Exception e) {
@@ -61,7 +59,7 @@ public class MedGui {
 
 	public static void showFrame()
 	{
-		frame.setVisible(true);
+		MedGui window = new MedGui();
 	}
 	
 	public static void doctorView()
@@ -85,7 +83,7 @@ public class MedGui {
 		tabbedPane.setToolTipText("");
 		tabbedPane.setBounds(2, 0, 442, 382);
 		frame.getContentPane().add(tabbedPane);
-		frame.setVisible(false);
+		frame.setVisible(true);
 		
 		JTextArea sympTxtArea = new JTextArea();
 		sympTxtArea.setLineWrap(true);
@@ -276,8 +274,6 @@ public class MedGui {
 		
 		sympScrlPn.setViewportView(sympTxtArea);
 		recordPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{sympScrlPn, sympTxtArea, lblSymptoms, btnSave, clrBtn, lblName, nameField}));
-		
-
 	}
 
 	public JTabbedPane getTabbedPane() {
