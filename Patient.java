@@ -4,11 +4,11 @@ public class Patient {
 	private String pID;
 	private String fName;
 	private String lName;
-	private String height;
-	private String weight;
+	private int height;//in inches
+	private int weight;//in lbs
 	private ArrayList<String> symptoms;
 	private ArrayList<String> ills;
-	private String insurance;
+	private String insurance;//company name
 	
 	public String getpID() {
 		return pID;
@@ -22,10 +22,10 @@ public class Patient {
 	public void setlName(String lName) {
 		this.lName = lName;
 	}
-	public void setHeight(String height) {
+	public void setHeight(int height) {
 		this.height = height;
 	}
-	public void setWeight(String weight) {
+	public void setWeight(int weight) {
 		this.weight = weight;
 	}
 	public void setInsurance(String insurance) {
@@ -37,10 +37,10 @@ public class Patient {
 	public String getlName() {
 		return lName;
 	}
-	public String getHeight() {
+	public int getHeight() {
 		return height;
 	}
-	public String getWeight() {
+	public int getWeight() {
 		return weight;
 	}
 	public ArrayList<String> getSymptoms() {
@@ -53,7 +53,7 @@ public class Patient {
 		return insurance;
 	}
 	
-	public Patient(String id, String fN, String lN, String hei, String wei, String insur)
+	public Patient(String id, String fN, String lN, int hei, int wei, String insur)
 	{
 		pID = id;
 		fName = fN;
