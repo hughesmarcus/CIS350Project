@@ -124,16 +124,36 @@ public class DBAccess
 	
 	/**
 	 * Attempts to add the illness with the given name and symptoms to the illness table
-	 * returns true if it was successfully added and false if it was not added
+	 * returns an arrayList of rejected symptoms.
 	 * @param ill
 	 * @param symps
-	 * @return added
+	 * @return reject
 	 */
-	public boolean addIll(String ill, ArrayList<String> symps)
+	public ArrayList<String> addIll(String ill, ArrayList<String> symps)
 	{
-		boolean added = false;
-		
-		return added;
+		ArrayList<String> reject = new ArrayList<String>();
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			for(int i = 0; i < symps.size(); i++)
+			{
+				try
+				{
+					st.executeUpdate("INSERT INTO illness VALUES('" + ill + "', '" + symps.get(i) + "');"); 
+				}
+				catch(com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err)
+				{
+					reject.add(symps.get(i));
+				}
+			}
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
+		return reject;
 	}
 	
 	/**
@@ -143,22 +163,45 @@ public class DBAccess
 	public ArrayList<String> getIlls()
 	{
 		ArrayList<String> ills = new ArrayList<String>();
-		
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("SELECT DISTINCT Illness_Name FROM illness;"); 
+			while (res.next()) 
+			{
+				String illness = res.getString("Illness_Name"); 
+				ills.add(illness);
+			} 
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
 		return ills;
 	}
 	
-	/**
-	 * Searches for the given illness and adds the given symptom to it and returns
-	 * true it was successful, otherwise returns false
-	 * @param ill
-	 * @param symp
-	 * @return add
-	 */
-	public boolean addToIll(String ill, String symp)
+	public ArrayList<String> getSymps(String ill)
 	{
-		boolean add = false;
-		
-		return add;
+		ArrayList<String> symps = new ArrayList<String>();
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("SELECT DISTINCT Symptom FROM illness WHERE Illness_Name = '" + ill + "';"); 
+			while (res.next()) 
+			{
+				String illness = res.getString("Symptom"); 
+				symps.add(illness);
+			} 
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
+		return symps;
 	}
 	
 	/**
@@ -171,7 +214,25 @@ public class DBAccess
 	public boolean delSymp(String ill, String symp)
 	{
 		boolean del = false;
-		
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			try
+			{
+				st.executeUpdate("DELETE FROM illness WHERE Illness_Name = '" + ill +"' AND Symptom = '" + symp +"';"); 
+				del = true;
+			}
+			catch(com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err)
+			{
+				del = false;	
+			}
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
 		return del;
 	}
 	
@@ -184,7 +245,25 @@ public class DBAccess
 	public boolean delIll(String ill)
 	{
 		boolean del = false;
-		
+		try 
+		{ 
+			Class.forName(driver).newInstance(); 
+			Connection conn = DriverManager.getConnection(url+dbName,userName,password); 
+			Statement st = conn.createStatement();
+			try
+			{
+				st.executeUpdate("DELETE FROM illness WHERE Illness_Name = '" + ill +"';"); 
+				del = true;
+			}
+			catch(com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err)
+			{
+				del = false;	
+			}
+			conn.close(); 
+		} catch (Exception e) 
+		{
+			e.printStackTrace(); 
+		}
 		return del;
 	}
 }
