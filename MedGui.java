@@ -7,8 +7,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
@@ -16,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
+import javax.swing.ListModel;
 
 import org.eclipse.wb.swing.DBAccess;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
@@ -25,6 +28,11 @@ import javax.swing.JList;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MedGui {
 
@@ -37,6 +45,8 @@ public class MedGui {
 	static JPanel patientsPanel;
 	static JPanel editPanel;
 	private JTextField addSympField;
+	private DefaultListModel illnessList;
+	private DefaultListModel symptomList;
 	DBAccess DB;
 
 	/**
@@ -84,13 +94,13 @@ public class MedGui {
 		
 		frame = new JFrame("MediApp");
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 450, 413);
+		frame.setBounds(100, 100, 490, 413);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setFont(new Font("Dialog", Font.BOLD, 12));
 		tabbedPane.setToolTipText("");
-		tabbedPane.setBounds(2, 0, 442, 382);
+		tabbedPane.setBounds(2, 0, 482, 382);
 		frame.getContentPane().add(tabbedPane);
 		frame.setVisible(true);
 		
@@ -101,9 +111,29 @@ public class MedGui {
 		recordPanel = new JPanel();
 		editPanel = new JPanel();
 		editPanel.setLayout(null);
+		symptomList = new DefaultListModel();
+		JList sympList = new JList(symptomList);
+		sympList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		sympList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		sympList.setBounds(170, 160, 150, 181);
 		
-		//get list of ills
-		JList illList = new JList();
+		illnessList = new DefaultListModel();
+		ArrayList<String> ills = DB.getIlls();
+		setIllList();
+		JList illList = new JList(illnessList);
+		illList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				symptomList.clear();
+				String selected = (String) illList.getSelectedValue();
+				ArrayList<String> symps = DB.getSymps(selected);
+				for(int i = 0; i < symps.size(); i++)
+				{
+					symptomList.addElement(symps.get(i));
+				}
+
+			}
+		});
 		illList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		illList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		illList.setBounds(10, 45, 150, 296);
@@ -119,41 +149,95 @@ public class MedGui {
 			public void actionPerformed(ActionEvent e) {
 				//add the inputed symptom to the selected illness if it doesn't already have it
 				String newSymp = addSympField.getText();
-				Object selIll = illList.getSelectedValue();//this should always be a string since the sympList should only be holding an array of strings
+				String illName = (String) illList.getSelectedValue();
+				ArrayList<String> symptoms = new ArrayList<String>();
+				symptoms.add(newSymp);
+				try
+				{
+					if(illName.equals("") || illName.equals(null) || newSymp.equals("") || newSymp.equals(null))
+					{
+						JOptionPane.showMessageDialog(frame,
+							    "Please select an illness and enter a Symptom");
+					}
+					else
+					{
+					ArrayList<String> result = DB.addIll(illName, symptoms);
+					if(result.size() < 1)
+					{
+						JOptionPane.showMessageDialog(frame,
+							    "Symptom successfully added");
+						symptomList.addElement(newSymp);
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(frame,
+								"Symptom has already been entered");
+					}
+				}
+				}catch(NullPointerException er)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Please select an illness and enter a Symptom");
+				}
+				
+				
 			}
 		});
-		btnAddSymptom.setBounds(328, 99, 99, 33);
+		btnAddSymptom.setBounds(328, 99, 139, 33);
 		editPanel.add(btnAddSymptom);
 		
 		JButton btnRemoveSymptom = new JButton("Remove Symptom");
-		btnRemoveSymptom.setBounds(279, 55, 119, 33);
+		btnRemoveSymptom.setBounds(307, 55, 160, 33);
 		editPanel.add(btnRemoveSymptom);
 		
 		JButton btnDelIll = new JButton("Delete Illness");
 		btnDelIll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//delete the selected illness
-				Object rmIll = illList.getSelectedValue();
+				String rmIll = (String) illList.getSelectedValue();
+				boolean del = DB.delIll(rmIll);
+				if(del)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Illness successfully removed");
+					setIllList();
+					symptomList.clear();
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "No such illness");
+				}
 			}
 		});
-		btnDelIll.setBounds(170, 55, 99, 33);
+		btnDelIll.setBounds(170, 55, 127, 33);
 		editPanel.add(btnDelIll);
 		
 		JLabel lblIllnesses = new JLabel("Illnesses");
 		lblIllnesses.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		lblIllnesses.setBounds(10, 25, 46, 14);
 		editPanel.add(lblIllnesses);
-		
-		JList sympList = new JList();
-		sympList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		sympList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		sympList.setBounds(170, 160, 150, 181);
 		editPanel.add(sympList);
 		
 		btnRemoveSymptom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//remove the selected symptom from the selected illness
-				Object rmSymp = sympList.getSelectedValue();
+				String rmSymp = (String) sympList.getSelectedValue();
+				int index = sympList.getSelectedIndex();
+				String illName = (String) illList.getSelectedValue();
+				
+				boolean success = DB.delSymp(illName, rmSymp);
+				if(success)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom successfully removed");
+					symptomList.remove(index);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "No such symptom");
+				}
 			}
 		});
 		
@@ -180,7 +264,7 @@ public class MedGui {
 		searchField.setColumns(10);
 		
 		JScrollPane resultScrlPn = new JScrollPane();
-		resultScrlPn.setBounds(110, 98, 270, 196);
+		resultScrlPn.setBounds(110, 98, 270, 198);
 		searchPanel.add(resultScrlPn);
 		
 		JTextArea searchResultsArea = new JTextArea();
@@ -303,9 +387,51 @@ public class MedGui {
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String symps = sympTxtArea.getText();
+				ArrayList<String> symptoms = parseInput(symps);
 				String name = nameField.getText();
-				//pass the symptoms and name to the save method to be added to the database
+				ArrayList<String> result = DB.addIll(name, symptoms);
+				
+				setIllList();
+				if(result.size() < 1)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Illness and symptoms successfully added");
+				}
+				else
+				{
+					if(result.size() == symptoms.size())
+					{
+						JOptionPane.showMessageDialog(frame,
+							    "All symptoms already entered");
+					}
+					else
+					{
+						String reject = "";
+						if(result.size() == 1)
+						{
+							reject += result.get(0) + " ";
+						}
+						else
+						{
+							for(int i = 0; i < result.size(); i++)
+							{
+								if(result.size() == 1)
+								{
+									reject += "and " + result.get(i) + " ";
+								}
+								else
+								{
+									reject += result.get(i) + ", ";
+								}
+								
+							}
+						}
+						JOptionPane.showMessageDialog(frame,
+							    reject + "already entered, other entries added");
+					}
+				}
 			}
+			
 		});
 		recordPanel.add(btnSave);
 		
@@ -318,7 +444,65 @@ public class MedGui {
 		
 		doctorView();
 	}
-
+	
+	public ArrayList<String> parseInput(String in)
+	{
+		ArrayList<String> result = new ArrayList<String>();
+		in += ",\n";
+		while(in.length() > 1)
+		{
+			try
+			{
+				String curr = "";
+				if(in.indexOf(',') < in.indexOf('\n'))
+				{
+					curr = in.substring(0, (in.indexOf(','))).trim();
+					if(curr.trim().equals("\n") || curr.trim().equals(",") || curr.trim().equals(""))
+					{
+						//don't add it
+					}
+					else
+					{
+						result.add(curr.trim());
+					}
+					in = in.substring((in.indexOf(',') + 1));
+				}
+				else if(in.indexOf(',') > in.indexOf('\n'))
+				{
+					curr = in.substring(0, (in.indexOf('\n'))).trim();
+					if(curr.trim().equals("\n") || curr.trim().equals(",") || curr.trim().equals(""))
+					{
+						//don't add it
+					}
+					else
+					{
+						result.add(curr.trim());
+					}
+					in = in.substring((in.indexOf('\n') + 1));
+				}
+			}catch(StringIndexOutOfBoundsException e)
+			{
+				if(in.trim().length() > 1)
+				{
+					result.add(in.trim());
+					break;
+				}
+			}
+			
+		}
+		return result;
+	}
+	
+	public void setIllList()
+	{
+		illnessList.clear();
+		ArrayList<String> ills = DB.getIlls();
+		for(int i = 0; i < ills.size(); i++)
+		{
+			illnessList.addElement(ills.get(i));
+		}
+	}
+	
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
 	}
