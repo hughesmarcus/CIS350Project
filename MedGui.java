@@ -6,7 +6,6 @@ import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -19,10 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.ListModel;
-
-import org.eclipse.wb.swing.DBAccess;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
-
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.border.TitledBorder;
@@ -30,7 +26,6 @@ import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -56,8 +51,8 @@ public class MedGui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {			
-//					LoginDialog login = new LoginDialog();
-//					login.setVisible(true);
+					LoginDialog login = new LoginDialog();
+					login.setVisible(true);
 					
 					MedGui gui = new MedGui();
 				} catch (Exception e) {
@@ -77,6 +72,7 @@ public class MedGui {
 	public static void showFrame()
 	{
 		MedGui window = new MedGui();
+		frame.setVisible(true);
 	}
 	
 	public static void doctorView()
@@ -102,7 +98,7 @@ public class MedGui {
 		tabbedPane.setToolTipText("");
 		tabbedPane.setBounds(2, 0, 482, 382);
 		frame.getContentPane().add(tabbedPane);
-		frame.setVisible(true);
+		frame.setVisible(false);
 		
 		JTextArea sympTxtArea = new JTextArea();
 		sympTxtArea.setLineWrap(true);
@@ -441,8 +437,6 @@ public class MedGui {
 		
 		sympScrlPn.setViewportView(sympTxtArea);
 		recordPanel.setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{sympScrlPn, sympTxtArea, lblSymptoms, btnSave, clrBtn, lblName, nameField}));
-		
-		doctorView();
 	}
 	
 	public ArrayList<String> parseInput(String in)
