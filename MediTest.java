@@ -150,13 +150,7 @@ public class MediTest {
 		i1= new Illness("chicken pox", "rest");
 		i2 = new Illness("2" , "math");
 	}
-	/**
-	 * Test method for Illness constructor.
-	 */
-	public final void testIllness() {
-		fail("Not yet implemented"); // TODO
-	}
-
+	
 	/**
 	 * Test method for {@link Illness#getillname()}.
 	 */
@@ -168,28 +162,30 @@ public class MediTest {
 	 * Test method for {@link Illness#setillname(java.lang.String)}.
 	 */
 	public final void testSetillname() {
-		fail("Not yet implemented"); // TODO
+		i2.setillname("Dog");
+		assertEquals("Dog", i2.getillname());
 	}
 
 	/**
-	 * Test method for {@link Illness#gettreatment()}.
+	 * Test method for Illness gettreatment()}.
 	 */
 	public final void testGettreatment() {
-		fail("Not yet implemented"); // TODO
+		assertEquals("chicken pox",i1.gettreatment());
 	}
 
 	/**
-	 * Test method for {@link Illness#settreatment(java.lang.String)}.
+	 * Test method for  Illness  settreatment
 	 */
 	public final void testSettreatment() {
-		fail("Not yet implemented"); // TODO
+		i2.settreatment("Dog");
+		assertEquals("Dog", i2.gettreatment());
 	}
 
 	/**
 	 * Test method for {@link Illness#getSymptoms()}.
 	 */
 	public final void testGetSymptoms() {
-		fail("Not yet implemented"); // TODO
+		assertEquals("chicken pox",i1.getSymptoms());
 	}
 
 	/**
