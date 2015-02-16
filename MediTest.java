@@ -9,6 +9,8 @@ public class MediTest {
 	private Patient p1;
 	private Patient p2;
 	private Patient p3;
+	private Illness i1;
+	private Illness i2;
 
 	protected void setUp() throws Exception {
 		d1 = new Doctor("79435", "Marcus", "Hughes");
@@ -70,16 +72,17 @@ public class MediTest {
 
 	// Patient test
 	protected void setUpP() throws Exception {
-		Patient p1 = new Patient( null, null,null,0,0,null);
-		Patient p2 = new Patient( "u89023", "Marcus", "Hughes", 72, 230, "Tricare");
-		Patient p3 = new Patient ("u586549", "Tom", "Harmen", 68, 130, "Mecare");
+		Patient p1 = new Patient(null, null, null, 0, 0, null);
+		Patient p2 = new Patient("u89023", "Marcus", "Hughes", 72, 230,
+				"Tricare");
+		Patient p3 = new Patient("u586549", "Tom", "Harmen", 68, 130, "Mecare");
 	}
+
 	@Test
 	public void testGetlname() throws Exception {
 		assertEquals("Hughes", p2.getlName());
 		assertEquals("Harmen", p3.getlName());
-	
-		
+
 	}
 
 	@Test
@@ -90,21 +93,25 @@ public class MediTest {
 
 	@Test
 	public void testGetID() throws Exception {
-		assertEquals(null , p1.getpID());
+		assertEquals(null, p1.getpID());
 		assertEquals("u586549", p3.getpID());
 	}
-	@Test 
-	public void testGetHeight() throws Exception{
+
+	@Test
+	public void testGetHeight() throws Exception {
 		assertEquals(72, p2.getHeight());
 		assertEquals(68, p3.getHeight());
 	}
-	public void testGetWeight() throws Exception{
+
+	public void testGetWeight() throws Exception {
 		assertEquals(230, p2.getWeight());
 		assertEquals(130, p3.getWeight());
 	}
-	public void testInsurance(){
+
+	public void testInsurance() {
 		assertEquals("Tricare", p2.getInsurance());
 	}
+
 	@Test
 	public void testSetID() throws Exception {
 		p1.setpID("A43546");
@@ -137,3 +144,58 @@ public class MediTest {
 		p3.setlName("Pickle");
 		assertEquals("Pickle", p3.getlName());
 	}
+
+	//
+	protected void setupI() {
+		i1= new Illness("chicken pox", "rest");
+		i2 = new Illness("2" , "math");
+	}
+	/**
+	 * Test method for Illness constructor.
+	 */
+	public final void testIllness() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link Illness#getillname()}.
+	 */
+	public final void testGetillname() {
+	assertEquals("chicken pox",i1.getillname());
+	}
+
+	/**
+	 * Test method for {@link Illness#setillname(java.lang.String)}.
+	 */
+	public final void testSetillname() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link Illness#gettreatment()}.
+	 */
+	public final void testGettreatment() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link Illness#settreatment(java.lang.String)}.
+	 */
+	public final void testSettreatment() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link Illness#getSymptoms()}.
+	 */
+	public final void testGetSymptoms() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link Illness#addisymptom(java.lang.String)}.
+	 */
+	public final void testAddisymptom() {
+		fail("Not yet implemented"); // TODO
+	}
+}
