@@ -2,6 +2,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+ * @author marcus
+ *
+ */
 public class MediTest {
 	private Doctor d1;
 	private Doctor d2;
@@ -147,20 +151,22 @@ public class MediTest {
 
 	//
 	protected void setupI() {
-		i1= new Illness("chicken pox", "rest");
-		i2 = new Illness("2" , "math");
+		i1 = new Illness("chicken pox", "rest");
+		i2 = new Illness("2", "math");
 	}
-	
+
 	/**
 	 * Test method for {@link Illness#getillname()}.
 	 */
+	@Test
 	public final void testGetillname() {
-	assertEquals("chicken pox",i1.getillname());
+		assertEquals("chicken pox", i1.getillname());
 	}
 
 	/**
 	 * Test method for {@link Illness#setillname(java.lang.String)}.
 	 */
+	@Test
 	public final void testSetillname() {
 		i2.setillname("Dog");
 		assertEquals("Dog", i2.getillname());
@@ -169,13 +175,15 @@ public class MediTest {
 	/**
 	 * Test method for Illness gettreatment()}.
 	 */
+	@Test
 	public final void testGettreatment() {
-		assertEquals("chicken pox",i1.gettreatment());
+		assertEquals("chicken pox", i1.gettreatment());
 	}
 
 	/**
-	 * Test method for  Illness  settreatment
+	 * Test method for Illness settreatment.
 	 */
+	@Test
 	public final void testSettreatment() {
 		i2.settreatment("Dog");
 		assertEquals("Dog", i2.gettreatment());
@@ -184,13 +192,15 @@ public class MediTest {
 	/**
 	 * Test method for {@link Illness#getSymptoms()}.
 	 */
+	@Test
 	public final void testGetSymptoms() {
-		assertEquals("chicken pox",i1.getSymptoms());
+		assertEquals("chicken pox", i1.getSymptoms());
 	}
 
 	/**
 	 * Test method for {@link Illness#addisymptom(java.lang.String)}.
 	 */
+	@Test
 	public final void testAddisymptom() {
 		fail("Not yet implemented"); // TODO
 	}
