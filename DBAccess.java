@@ -4,6 +4,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+/**
+ * Class to access the database and return the needed information.
+ * @author silas
+ *
+ */
 public class DBAccess {
 	private final String url = "jdbc:mysql://localhost:3306/";
 	private final String dbName = "illnessdb";
@@ -14,8 +19,6 @@ public class DBAccess {
 	private final String userName = "vincensi";
 	private final String password = "Cis350";
 
-	private final String illTable = "illness";
-	private final String userTable = "users";
 /**
  * 
  */
