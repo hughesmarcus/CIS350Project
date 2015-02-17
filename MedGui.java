@@ -1,13 +1,10 @@
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Component;
-import java.awt.ScrollPane;
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -17,32 +14,68 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-import javax.swing.ListModel;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 import javax.swing.JComboBox;
 import javax.swing.JList;
-import javax.swing.border.TitledBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Main GUI class for the MediApp.
+ * @author silas
+ *
+ */
 public class MedGui {
-
+	/**
+	 * the main frame.
+	 */
 	private static JFrame frame;
+	/**
+	 * name field.
+	 */
 	private JTextField nameField;
+	/**
+	 * tabbed pane.
+	 */
 	private static JTabbedPane tabbedPane;
+	/**
+	 * search field.
+	 */
 	private JTextField searchField;
-	static JPanel recordPanel;
-	JPanel searchPanel;
-	static JPanel patientsPanel;
-	static JPanel editPanel;
+	/**
+	 * record panel.
+	 */
+	private static JPanel recordPanel;
+	/**
+	 * search panel.
+	 */
+	private JPanel searchPanel;
+	/**
+	 * patients panel.
+	 */
+	private static JPanel patientsPanel;
+	/**
+	 * edit panel.
+	 */
+	private static JPanel editPanel;
+	/**
+	 * add symptom field.
+	 */
 	private JTextField addSympField;
+	/**
+	 * illness list.
+	 */
 	private DefaultListModel illnessList;
+	/**
+	 * symptom list.
+	 */
 	private DefaultListModel symptomList;
-	DBAccess DB;
+	/**
+	 * database access.
+	 */
+	private DBAccess DB;
 
 	/**
 	 * Launch the application.
@@ -227,10 +260,10 @@ public class MedGui {
 			}
 		});
 
-		JLabel lblSymptoms_1 = new JLabel("Symptoms");
-		lblSymptoms_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblSymptoms_1.setBounds(170, 140, 67, 14);
-		editPanel.add(lblSymptoms_1);
+		JLabel lblSymptoms1 = new JLabel("Symptoms");
+		lblSymptoms1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblSymptoms1.setBounds(170, 140, 67, 14);
+		editPanel.add(lblSymptoms1);
 		searchPanel = new JPanel();
 		// patientsPanel = new JPanel();
 		tabbedPane.addTab("Search", null, searchPanel, null);
@@ -410,7 +443,7 @@ public class MedGui {
 /**
  * 
  * @param in
- * @return
+ * @return result
  */
 	public ArrayList<String> parseInput(String in) {
 		ArrayList<String> result = new ArrayList<String>();
