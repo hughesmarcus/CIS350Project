@@ -252,4 +252,49 @@ public class DBAccess {
 		}
 		return del;
 	}
+	public ArrayList<String> adddoctor(Doctor D){
+		ArrayList<String> reject = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("INSERT INTO doctor VALUES('"+ D.getdID() +"', '" +D.getdfName()+"', '" + D.getdlName()+"', '"+D.getPatients()+ "');");
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				reject.add(D.getdlName());
+			}
+		
+		conn.close();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	return reject;
+		
+	}
+	public ArrayList<Doctor> getDoc() {
+		ArrayList<Doctor> Doc = new ArrayList<Doctor>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT DISTINCT Did FROM doctor;");
+			ResultSet res1 = st
+					.executeQuery("SELECT DISTINCT Dfname FROM doctor;");
+			ResultSet res2 = st
+					.executeQuery("SELECT DISTINCT Dlname FROM doctor;");
+			while (res.next()) {
+				Doctor Doc1= new Doctor(res.getString("Did"),res1.getString("dfname"), res2.getString("dlname")  );
+				
+				Doc.add(Doc1);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Doc;
+	}
+	
 }
