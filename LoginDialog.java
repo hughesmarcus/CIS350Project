@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
- 
+
 /**
  * 
  * @author
@@ -21,7 +21,13 @@ public class LoginDialog extends JDialog {
 	private JTextField textField;
 	private JPasswordField passwordField;
 	DBAccess DB;
-
+	private String userT;
+	
+	public String getUserType()
+	{
+		return userT;
+	}
+	
 	/**
 	 * Launch the application.
 	 * 
@@ -94,16 +100,26 @@ public class LoginDialog extends JDialog {
 				String type = DB.login(user, pass);
 				// determine if they belong to a doctor or a patient
 				if (type.equals("D")) {
-					MedGui.showFrame();
-					MedGui.doctorView();
-					// record and patients tabs only
-					// get added if a doctor is
-					// logging in
+					//display main frame in doctor view	
+					userT = "D";
+					MedGui frame = new MedGui();
+					frame.showFrame();
 					setVisible(false);
 				} else if (type.equals("P")) {
-					MedGui.showFrame();
+					//display main frame in paitent view
+					userT= "P";
+					MedGui frame = new MedGui();
+					frame.showFrame();
 					setVisible(false);
-				} else {
+				}
+				else if(type.equals("A")){
+					//display main frame in admin view
+					userT = "A";
+					MedGui frame = new MedGui();
+					frame.showFrame();
+					setVisible(false);
+				}
+				else {
 					// display wrong username/password
 					lblInvalid.setText("Invalid username/password combination");
 				}
