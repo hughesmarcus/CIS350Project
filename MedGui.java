@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -54,7 +56,7 @@ public class MedGui {
 	/**
 	 * the main frame.
 	 */
-	private static JFrame frame;
+	public static JFrame frame;
 	/**
 	 * tabbed pane.
 	 */
@@ -62,17 +64,25 @@ public class MedGui {
 	/**
 	 * illness list.
 	 */
-	private DefaultListModel illnessList;
+	private static DefaultListModel illnessList;
 	/**
 	 * symptom list.
 	 */
-	private DefaultListModel symptomList;
+	private DefaultComboBoxModel symptomList;
 	/**
 	 * database access.
 	 */
-	private DBAccess DB;
+	private static DBAccess DB;
 	private JTextField textField;
-
+	static JList userList;
+	private JPanel profilePatPanel;
+	private JPanel docProfilePanel;
+	private JPanel messagePanel;
+	private JPanel dbEditPanel;
+	private JPanel userEditPanel;
+	private static LoginDialog login;
+	private JComboBox sympBox;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -80,10 +90,11 @@ public class MedGui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					LoginDialog login = new LoginDialog();
-					login.setVisible(true);
-
-					MedGui gui = new MedGui();
+//					login = new LoginDialog();
+//					login.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+//					login.setVisible(true);
+					showFrame();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -107,36 +118,6 @@ public class MedGui {
 	}
 
 	/**
-	 * sets up the frame for doctor access
-	 */
-	public static void doctorView() {
-		//patients panel
-		//illness/symptom search panel
-		//messaging panel
-		//doctor profile panel
-	}
-	
-	/**
-	 * sets up the frame for patient access
-	 */
-	public static void patientView()
-	{
-		//profile panel
-		//illness/symptom search panel
-		//messaging panel
-	}
-	
-	/**
-	 * sets up the fram for admin access
-	 */
-	public static void adminView()
-	{
-		//illness/symptom edit panel
-		//user edit panel
-		
-	}
-
-	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
@@ -149,6 +130,21 @@ public class MedGui {
 		{
 			userlistModel.addElement(usernames.get(i));
 		}
+		
+		illnessList = new DefaultListModel();
+		ArrayList<String> illNames = DB.getIlls();
+		for(int i = 0; i < illNames.size(); i++)
+		{
+			illnessList.addElement(illNames.get(i));
+		}
+		
+		symptomList = new DefaultComboBoxModel();
+		ArrayList<String> sympNames = DB.getSymps();
+		for(int i = 0; i < sympNames.size(); i++)
+		{
+			symptomList.addElement(sympNames.get(i));
+		}
+		
 		//array list of all the symptoms
 		ArrayList<String> symptoms = DB.getSymps();
 
@@ -171,6 +167,7 @@ public class MedGui {
 		searchPanel.setLayout(null);
 		
 		JList illList = new JList();
+		illList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		illList.setToolTipText("List of all illnesses in the database");
 		illList.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		illList.setBounds(10, 11, 100, 330);
@@ -211,8 +208,7 @@ public class MedGui {
 		searchBackLbl.setBounds(0, 0, 432, 357);
 		searchPanel.add(searchBackLbl);
 		
-		JPanel profilePatPanel = new JPanel();
-		tabbedPane.addTab("Profile", null, profilePatPanel, null);
+		profilePatPanel = new JPanel();
 		profilePatPanel.setLayout(null);
 		
 		JLabel patNameLbl = new JLabel("Patient Name");
@@ -280,11 +276,11 @@ public class MedGui {
 		patProfBackLbl.setBounds(0, 0, 430, 357);
 		profilePatPanel.add(patProfBackLbl);
 		
-		JPanel docProfilePanel = new JPanel();
-		tabbedPane.addTab("Profile", null, docProfilePanel, null);
+		docProfilePanel = new JPanel();
 		docProfilePanel.setLayout(null);
 		
 		JList patList = new JList();
+		patList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		patList.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		patList.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED, new Color(255, 255, 225), null, null, null), new BevelBorder(BevelBorder.RAISED, new Color(51, 153, 255), null, null, null)));
 		patList.setBounds(10, 80, 125, 210);
@@ -357,8 +353,7 @@ public class MedGui {
 		lblNewLabel_1.setBounds(0, 0, 429, 357);
 		docProfilePanel.add(lblNewLabel_1);
 		
-		JPanel messagePanel = new JPanel();
-		tabbedPane.addTab("Messaging", null, messagePanel, null);
+		messagePanel = new JPanel();
 		messagePanel.setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("Messages from:");
@@ -368,6 +363,7 @@ public class MedGui {
 		messagePanel.add(lblNewLabel);
 		
 		JList list = new JList();
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setToolTipText("List of your messages");
 		list.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		list.setBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.textText));
@@ -400,20 +396,42 @@ public class MedGui {
 		lblNewLabel_2.setBounds(0, 0, 430, 357);
 		messagePanel.add(lblNewLabel_2);
 		
-		JPanel dbEditPanel = new JPanel();
-		tabbedPane.addTab("Database", null, dbEditPanel, null);
+		dbEditPanel = new JPanel();
 		dbEditPanel.setLayout(null);
 		
-		JList illsList = new JList();
-		illsList.setBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.inactiveCaptionText));
-		illsList.setBounds(12, 40, 120, 305);
-		dbEditPanel.add(illsList);
+		JScrollPane illnessPane = new JScrollPane();
+		illnessPane.setViewportBorder(new BevelBorder(BevelBorder.RAISED, SystemColor.textHighlight, SystemColor.info, SystemColor.inactiveCaptionText, SystemColor.activeCaptionText));
+		illnessPane.setBounds(12, 40, 125, 305);
+		dbEditPanel.add(illnessPane);
 		
 		JList sympsList = new JList();
-		sympsList.setEnabled(false);
-		sympsList.setBorder(new BevelBorder(BevelBorder.LOWERED, SystemColor.windowBorder, SystemColor.textHighlight, SystemColor.windowText, SystemColor.inactiveCaptionText));
-		sympsList.setBounds(145, 40, 120, 150);
-		dbEditPanel.add(sympsList);
+		sympsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		JList illsList = new JList(illnessList);
+		illsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		illsList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				//update the symptoms list
+				DefaultListModel sList = new DefaultListModel();
+				String illness = (String) illsList.getSelectedValue();
+				ArrayList<String> symptoms = DB.getIllSymps(illness);
+				for(int i = 0; i < symptoms.size(); i++)
+				{
+					sList.addElement(symptoms.get(i));
+				}
+				sympsList.setModel(sList);
+				frame.validate();
+			}
+		});
+		illnessPane.setViewportView(illsList);
+		illsList.setBorder(null);
+		
+		JScrollPane symptomsPane = new JScrollPane();
+		symptomsPane.setViewportBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.activeCaptionText));
+		symptomsPane.setBounds(145, 40, 120, 150);
+		dbEditPanel.add(symptomsPane);
+		
+		symptomsPane.setViewportView(sympsList);
+		sympsList.setBorder(null);
 		
 		JLabel lblIllnesses = new JLabel("Illnesses:");
 		lblIllnesses.setFont(new Font("Times New Roman", Font.BOLD, 16));
@@ -440,30 +458,151 @@ public class MedGui {
 		dbEditPanel.add(addIllBtn);
 		
 		JButton delIllBtn = new JButton("Delete Illness");
+		delIllBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String illness = (String) illsList.getSelectedValue();
+				boolean deleted = DB.delIll(illness);
+				if(deleted)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Illness successfully deleted.",
+						    "Deleted",
+						    JOptionPane.PLAIN_MESSAGE);
+					updateIllList();
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom could not be deleted.",
+						    "Error",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
+			}
+		});
 		delIllBtn.setToolTipText("Remove an illness from the database");
 		delIllBtn.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		delIllBtn.setBounds(145, 235, 140, 25);
 		dbEditPanel.add(delIllBtn);
 		
 		JButton addSympBtn = new JButton("Add Symptom");
+		addSympBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String symptom = (String) sympBox.getSelectedItem();
+				String illness = (String) illsList.getSelectedValue();
+				ArrayList<String> s = new ArrayList<String>();
+				s.add(symptom);
+				ArrayList<String> rej = DB.addIll(illness, s);
+				if(rej.size() > 0)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom could not be added.",
+						    "Error",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom successfully added.",
+						    "Entry Made",
+						    JOptionPane.PLAIN_MESSAGE);
+					//update symptoms list
+					DefaultListModel syList = new DefaultListModel();
+					ArrayList<String> symptoms = DB.getIllSymps(illness);
+					for(int i = 0; i < symptoms.size(); i++)
+					{
+						syList.addElement(symptoms.get(i));
+					}
+					sympsList.setModel(syList);
+					frame.validate();
+				}
+			}
+		});
 		addSympBtn.setToolTipText("Add the selected symptom from the box to the selected illness");
 		addSympBtn.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		addSympBtn.setBounds(280, 75, 140, 25);
 		dbEditPanel.add(addSympBtn);
 		
 		JButton delSympBtn = new JButton("Delete Symptom");
+		delSympBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//illsList, sympsList
+				String illness = (String) illsList.getSelectedValue();
+				String symptom = (String) sympsList.getSelectedValue();
+				boolean deleted = DB.delIllSymp(illness, symptom);
+				if(deleted)
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom successfully deleted.",
+						    "Deleted",
+						    JOptionPane.PLAIN_MESSAGE);
+					DefaultListModel symList = new DefaultListModel();
+					ArrayList<String> symptoms = DB.getIllSymps(illness);
+					for(int i = 0; i < symptoms.size(); i++)
+					{
+						symList.addElement(symptoms.get(i));
+					}
+					sympsList.setModel(symList);
+					frame.validate();
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Symptom could not be deleted.",
+						    "Error",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
+			}
+		});
 		delSympBtn.setToolTipText("Delete the selected symptom from the selected illness");
 		delSympBtn.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		delSympBtn.setBounds(280, 110, 140, 25);
 		dbEditPanel.add(delSympBtn);
 		
 		JButton newSympBtn = new JButton("New Symptom");
+		newSympBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String newSymp = (String)JOptionPane.showInputDialog("Enter new Symptom: ");
+				try
+				{
+					if(!newSymp.equals(""))
+					{
+						boolean successful = DB.newSymptom(newSymp);
+						if(successful)
+						{
+							JOptionPane.showMessageDialog(frame,
+								    "Symptom succesfully entered.",
+								    "Entered",
+								    JOptionPane.PLAIN_MESSAGE);
+							updateSympList();
+//							ArrayList<String> sympts = DB.getSymps();
+//							for(int i = 0; i < symptoms.size(); i++)
+//							{
+//								sympBox.addItem(sympts.get(i));	
+//							}
+//							frame.validate();
+						}
+						else
+						{
+							JOptionPane.showMessageDialog(frame,
+								    "Symptom could not be added.",
+								    "Error",
+								    JOptionPane.PLAIN_MESSAGE);
+						}
+					}
+				}catch(NullPointerException np)
+				{
+					
+				}
+			}
+		});
 		newSympBtn.setToolTipText("Add a symptom to the list of available symptoms");
 		newSympBtn.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		newSympBtn.setBounds(280, 145, 140, 25);
 		dbEditPanel.add(newSympBtn);
 		
-		JComboBox sympBox = new JComboBox();
+		//get all symptoms from db to populate sympBox
+		sympBox = new JComboBox();
+		sympBox.setModel(symptomList);
 		sympBox.setToolTipText("list of all available symptoms");
 		sympBox.setBounds(280, 40, 140, 25);
 		dbEditPanel.add(sympBox);
@@ -473,8 +612,7 @@ public class MedGui {
 		dataBackLbl.setBounds(0, 0, 428, 357);
 		dbEditPanel.add(dataBackLbl);
 		
-		JPanel userEditPanel = new JPanel();
-		tabbedPane.addTab("Users", null, userEditPanel, null);
+		userEditPanel = new JPanel();
 		userEditPanel.setLayout(null);
 		
 		JTextArea userInfoArea = new JTextArea();
@@ -485,7 +623,8 @@ public class MedGui {
 		scrollPane_2.setBounds(10, 40, 125, 235);
 		userEditPanel.add(scrollPane_2);
 		
-		JList userList = new JList(userlistModel);
+		userList = new JList(userlistModel);
+		userList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane_2.setViewportView(userList);
 		userList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
@@ -585,23 +724,15 @@ public class MedGui {
 			public void actionPerformed(ActionEvent e) {
 				UserDialog dia = new UserDialog();
 				dia.setVisible(true);
-//				System.out.println(dia.isSuccess());
-//				if(dia.isSuccess())
-//				{
-//					
-//					//JList userList = new JList(userlistModel);
-//					//DefaultListModel userlistModel = new DefaultListModel();
-//					//get users from database and add them to the list model.
-//					DefaultListModel newList = new DefaultListModel();
-//					ArrayList<String> usernames = DB.getUsers();
-//					for(int i = 0; i < usernames.size(); i++)
-//					{
-//						newList.addElement(usernames.get(i));
-//					}
-//					userList.setModel(newList);
-//					System.out.println(userList.getModel());
-//					frame.validate();
-//				}
+				DefaultListModel newList = new DefaultListModel();
+				ArrayList<String> usernames = DB.getUsers();
+				for(int i = 0; i < usernames.size(); i++)
+				{
+					newList.addElement(usernames.get(i));
+				}
+				userList.setModel(newList);
+				System.out.println(userList.getModel());
+				frame.validate();
 			}
 		});
 		btnAddUser.setToolTipText("Add a new user");
@@ -610,6 +741,14 @@ public class MedGui {
 		userEditPanel.add(btnAddUser);
 		
 		JButton btnDeleteUser = new JButton("Delete User");
+		btnDeleteUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String selUser = (String)userList.getSelectedValue();
+				DB.delUser(selUser);
+				updateUserList();
+				userInfoArea.setText("");
+			}
+		});
 		btnDeleteUser.setToolTipText("Delete the selected user");
 		btnDeleteUser.setFont(new Font("Times New Roman", Font.BOLD, 14));
 		btnDeleteUser.setBounds(10, 310, 125, 25);
@@ -619,9 +758,47 @@ public class MedGui {
 		btnEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String user = (String) userList.getSelectedValue();
-				System.out.println(user);
-				UserDialog dia = new UserDialog();
-				dia.setVisible(true);
+				try
+				{
+					if(user.equals(null))
+					{
+						userInfoArea.setText("No selected user, to edit a user please select a username from the list.");
+					}
+					else
+					{
+						//get the selected user's info
+						String type = DB.getType(user);
+						
+						int id = DB.getID(user);
+						String name = DB.getName(id, type);
+						String fName = name.substring(0, name.indexOf(" "));
+						String lName = name.substring(name.indexOf(" ") + 1, name.length());
+						String password = DB.getPass(id);
+						String specialization = "";
+						int height = 0;
+						int weight = 0;
+						String insurance = "";
+						if(type.equals("D"))
+						{
+							//get spec for docs
+							specialization = DB.getSpec(id);
+						}
+						else if(type.equals("P"))
+						{
+							//height, weight, insurance for patients
+							height = DB.getHeight(id);
+							weight = DB.getWeight(id);
+							insurance = DB.getInsurance(id);
+						}
+						
+						UserDialog dia = new UserDialog(type, id, fName, lName, height, weight, insurance, specialization, user, password);
+						dia.setVisible(true);
+					}
+				}catch(NullPointerException err)
+				{
+					userInfoArea.setText("No selected user, to edit a user please select a username from the list.");
+				}
+				
 			}
 		});
 		btnEdit.setToolTipText("Edit the selected user's info");
@@ -648,10 +825,29 @@ public class MedGui {
 		userBackLbl.setBounds(0, 0, 429, 357);
 		userEditPanel.add(userBackLbl);
 		
-
-		
+		//add the user specific tabs top the frame
+//		if(login.getUserType().equals("A"))
+//		{
+//			tabbedPane.addTab("Database", null, this.dbEditPanel, null);
+//			tabbedPane.addTab("Users", null, this.userEditPanel, null);
+//		}
+//		else if(login.getUserType().equals("D"))
+//		{
+//			tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+//			tabbedPane.addTab("Profile", null, this.docProfilePanel, null);
+//		}
+//		else if(login.getUserType().equals("P"))
+//		{
+//			tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
+//			tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+//		}
+		tabbedPane.addTab("Database", null, this.dbEditPanel, null);
+		tabbedPane.addTab("Users", null, this.userEditPanel, null);
+		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+		tabbedPane.addTab("Profile", null, this.docProfilePanel, null);
+		tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
+		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
 		frame.setVisible(false);
-
 	}
 /**
  * 
@@ -693,15 +889,40 @@ public class MedGui {
 		}
 		return result;
 	}
-/**
- * 
- */
-	public void setIllList() {
+	
+	/**
+	 * 
+	 */
+	public static void updateIllList() {
 		illnessList.clear();
 		ArrayList<String> ills = DB.getIlls();
 		for (int i = 0; i < ills.size(); i++) {
 			illnessList.addElement(ills.get(i));
 		}
+		frame.validate();
+	}
+	
+	public void updateSympList()
+	{
+		symptomList.removeAllElements();
+		ArrayList<String> sympNames = DB.getSymps();
+		for(int i = 0; i < sympNames.size(); i++)
+		{
+			symptomList.addElement(sympNames.get(i));
+		}
+		frame.validate();
+	}
+	
+	public static void updateUserList()
+	{
+		DefaultListModel newList = new DefaultListModel();
+		ArrayList<String> usernames = DB.getUsers();
+		for(int i = 0; i < usernames.size(); i++)
+		{
+			newList.addElement(usernames.get(i));
+		}
+		userList.setModel(newList);
+		frame.validate();
 	}
 /**
  * 
@@ -709,5 +930,11 @@ public class MedGui {
  */
 	public JTabbedPane getTabbedPane() {
 		return tabbedPane;
+	}
+	
+	public void updateFrame()
+	{
+		frame.repaint();
+		frame.validate();
 	}
 }
