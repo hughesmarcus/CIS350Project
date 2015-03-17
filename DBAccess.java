@@ -201,6 +201,53 @@ public class DBAccess {
 	}
 
 	/**
+	 * retrieves all the symptoms associated with the given illness
+	 * @param illness
+	 * @return symptoms
+	 */
+	public ArrayList<String> getIllSymps(String illness)
+	{
+		ArrayList<String> symptoms = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT Symptom FROM illness WHERE Illness_Name = '" + illness + "';");
+			while (res.next()) {
+				String symp = res.getString("Symptom");
+				symptoms.add(symp);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return symptoms;
+	}
+	
+	public boolean newSymptom(String symptom)
+	{
+		boolean valid = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("INSERT INTO symptoms VALUES ('" + symptom + "');");
+				valid = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				valid = false;
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return valid;
+	}
+	
+	/**
 	 * Searches for the given illness and symptom then deletes the symptom,
 	 * returns true if successful.
 	 * 
@@ -208,7 +255,7 @@ public class DBAccess {
 	 * @param symp
 	 * @return del
 	 */
-	public boolean delSymp(String ill, String symp) {
+	public boolean delIllSymp(String ill, String symp) {
 		boolean del = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -344,15 +391,15 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = null;
-			if(type.equals("Admin"))
+			if(type.equals("Admin") || type.equals("A"))
 			{
 				res = st.executeQuery("SELECT Fname, Lname FROM admin WHERE aID = " + id +";");
 			}
-			else if(type.equals("Doctor"))
+			else if(type.equals("Doctor") || type.equals("D"))
 			{
 				res = st.executeQuery("SELECT Fname, Lname FROM doctor WHERE dID = " + id +";");
 			}
-			else if(type.equals("Patient"))
+			else if(type.equals("Patient") || type.equals("P"))
 			{
 				res = st.executeQuery("SELECT Fname, Lname FROM patient WHERE pID = " + id +";");
 			}
@@ -533,6 +580,22 @@ public class DBAccess {
 		return in;
 	}
 	
+	/**
+	 * Adds a user to the database with the given info, determines the user type and first adds them
+	 * to the user table then to the table corresponding to their type. Type also dictates
+	 * which of the parameters are used in the inserts.
+	 * @param type
+	 * @param id
+	 * @param fName
+	 * @param lName
+	 * @param h
+	 * @param w
+	 * @param insur
+	 * @param spec
+	 * @param un
+	 * @param pass
+	 * @return add
+	 */
 	public boolean addUser(String type, int id, String fName, String lName, int h, int w, String insur, String spec, String un, String pass)
 	{
 		boolean add = false;
@@ -613,4 +676,31 @@ public class DBAccess {
 		}
 		return add;
 	}
+	
+	/**
+	 * delete the specified user from the users table(which will cascade to the other appropriate tables)
+	 * @param username
+	 * @return del
+	 */
+	public boolean delUser(String username)
+	{
+		boolean del = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("DELETE FROM users WHERE username = '" + username +"';");
+				del = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				del = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return del;
+	}
+	
 }
