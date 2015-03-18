@@ -73,7 +73,6 @@ public class MedGui {
 	 * database access.
 	 */
 	private static DBAccess DB;
-	private JTextField textField;
 	static JList userList;
 	private JPanel profilePatPanel;
 	private JPanel docProfilePanel;
@@ -82,6 +81,9 @@ public class MedGui {
 	private JPanel userEditPanel;
 	private static LoginDialog login;
 	private JComboBox sympBox;
+	private Doctor doc;
+	private Patient pat;
+	private Admin ad;
 	
 	/**
 	 * Launch the application.
@@ -166,42 +168,47 @@ public class MedGui {
 		tabbedPane.setEnabledAt(0, true);
 		searchPanel.setLayout(null);
 		
+		JScrollPane illListPane = new JScrollPane();
+		illListPane.setBounds(10, 11, 130, 330);
+		searchPanel.add(illListPane);
+		
 		JList illList = new JList();
+		illList.setModel(illnessList);
+		illListPane.setViewportView(illList);
 		illList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		illList.setToolTipText("List of all illnesses in the database");
 		illList.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		illList.setBounds(10, 11, 100, 330);
 		illList.setBorder(new BevelBorder(BevelBorder.LOWERED, SystemColor.textHighlight, null, null, null));
-		searchPanel.add(illList);
-		
-		textField = new JTextField();
-		textField.setToolTipText("search parameter");
-		textField.setBounds(122, 43, 170, 20);
-		searchPanel.add(textField);
-		textField.setColumns(10);
 		
 		JButton btnSearch = new JButton("Search");
+		btnSearch.setToolTipText("Search for illnesses with selected symptom");
 		btnSearch.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\search_button_blue.png"));
-		btnSearch.setBounds(304, 40, 100, 25);
+		btnSearch.setBounds(320, 40, 100, 25);
 		btnSearch.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		searchPanel.add(btnSearch);
 		
 		JLabel lblSearchTheDatabase = new JLabel("Search the database of illnesses");
 		lblSearchTheDatabase.setForeground(Color.WHITE);
-		lblSearchTheDatabase.setBounds(122, 15, 244, 14);
+		lblSearchTheDatabase.setBounds(150, 15, 244, 14);
 		lblSearchTheDatabase.setFont(new Font("Times New Roman", Font.BOLD | Font.ITALIC, 18));
 		searchPanel.add(lblSearchTheDatabase);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, SystemColor.textHighlight, SystemColor.desktop));
-		scrollPane.setBounds(122, 75, 270, 267);
-		searchPanel.add(scrollPane);
+		JComboBox searchSympBox = new JComboBox();
+		searchSympBox.setModel(symptomList);
+		searchSympBox.setToolTipText("Select a symptom to search for");
+		searchSympBox.setBounds(150, 40, 160, 25);
+		searchPanel.add(searchSympBox);
 		
-		JTextArea txtrILikeTo = new JTextArea();
-		txtrILikeTo.setToolTipText("search results");
-		txtrILikeTo.setLineWrap(true);
-		txtrILikeTo.setWrapStyleWord(true);
-		scrollPane.setViewportView(txtrILikeTo);
+		JScrollPane resultPane = new JScrollPane();
+		resultPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, SystemColor.textHighlight, SystemColor.desktop));
+		resultPane.setBounds(150, 75, 260, 267);
+		searchPanel.add(resultPane);
+		
+		JTextArea resultArea = new JTextArea();
+		resultArea.setToolTipText("illness info");
+		resultArea.setLineWrap(true);
+		resultArea.setWrapStyleWord(true);
+		resultPane.setViewportView(resultArea);
 		
 		JLabel searchBackLbl = new JLabel("");
 		searchBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));
@@ -427,7 +434,7 @@ public class MedGui {
 		
 		JScrollPane symptomsPane = new JScrollPane();
 		symptomsPane.setViewportBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.activeCaptionText));
-		symptomsPane.setBounds(145, 40, 120, 150);
+		symptomsPane.setBounds(145, 40, 127, 150);
 		dbEditPanel.add(symptomsPane);
 		
 		symptomsPane.setViewportView(sympsList);
