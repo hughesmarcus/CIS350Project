@@ -541,7 +541,7 @@ public class DBAccess {
 	}
 	
 	/**
-	 * retrieves the names of all the patients 
+	 * retrieves the names of all the patients that the given doctor sees
 	 * @param id
 	 * @return patients
 	 */
@@ -933,6 +933,12 @@ public class DBAccess {
 		return removed;
 	}
 	
+	/**
+	 * assigns the given symptom to the given patient
+	 * @param id
+	 * @param symptom
+	 * @return boolean added
+	 */
 	public boolean giveSymptom(int id, String symptom)
 	{
 		boolean added = false;
@@ -952,5 +958,162 @@ public class DBAccess {
 			e.printStackTrace();
 		}
 		return added;
+	}
+	
+	/**
+	 * returns the list of names of people that have sent messages to the user 
+	 * @param id
+	 * @param type
+	 * @return from
+	 */
+	public ArrayList<String> getMessages(int id, String type)
+	{
+		ArrayList<String> from = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = null;
+			if(type.equals("P"))
+			{
+				res = st
+						.executeQuery("SELECT Lname, Fname FROM doctor WHERE dID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
+			}
+			else if(type.equals("D"))
+			{
+				res = st
+					.executeQuery("SELECT Lname, Fname FROM patient WHERE pID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
+			}
+			while (res.next()) {
+				from.add(res.getString("Fname") + " " + res.getString("Lname"));
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return from;
+	}
+	
+	/**
+	 * gets the text of the message sent from the 'name' to toID
+	 * @param name
+	 * @param userType
+	 * @return String text
+	 */
+	public String getText(String name, String userType, int toID)
+	{
+		String text = "";
+		String fname = name.substring(0, name.indexOf(" "));
+		String lname = name.substring(name.indexOf(" ") + 1, name.length());
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = null;
+			if(userType.equals("P"))
+			{
+				res = st
+						.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+			}
+			else if(userType.equals("D"))
+			{
+				res = st
+					.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+			}
+			while (res.next()) {
+				text = res.getString("text");
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return text;
+	}
+	
+	/**
+	 * deletes the message from name to toID 
+	 * @param name
+	 * @param userType
+	 * @return boolean del
+	 */
+	public boolean delMessage(String name, String userType, int toID)
+	{
+		boolean del = false;
+		String fname = name.substring(0, name.indexOf(" "));
+		String lname = name.substring(name.indexOf(" ") + 1, name.length());
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				if(userType.equals("P"))
+				{
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+				}
+				else if(userType.equals("D"))
+				{
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "' AND toID = " + toID + ");");
+				}
+				del = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				del = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return del;
+	}
+	
+	/**
+	 * add the message to the message table
+	 * @param from
+	 * @param to
+	 * @param text
+	 * @param userType
+	 * @return sent
+	 */
+	public boolean sendMessage(int from, String to, String text, String userType)
+	{
+		boolean sent = false;
+		String fname = to.substring(0, to.indexOf(" "));
+		String lname = to.substring(to.indexOf(" ") + 1, to.length());
+		int toID = 0;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				if(userType.equals("D"))
+				{
+					ResultSet res = st.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
+					while(res.next())
+					{
+						toID = res.getInt("pID");
+					}
+					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
+				}
+				else 	if(userType.equals("P"))
+				{
+					ResultSet res = st.executeQuery("SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
+					while(res.next())
+					{
+						toID = res.getInt("dID");
+					}
+					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
+				}
+				sent = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				sent = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sent;
 	}
 }
