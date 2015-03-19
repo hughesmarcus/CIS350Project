@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -17,29 +16,21 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
-
 import org.eclipse.wb.swing.FocusTraversalOnArray;
-
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.border.BevelBorder;
 import javax.swing.ListSelectionModel;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.ImageIcon;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
 import java.awt.Color;
 import java.awt.SystemColor;
-
 import javax.swing.border.MatteBorder;
 import javax.swing.border.CompoundBorder;
-
 import java.awt.Toolkit;
-
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.JTree;
@@ -86,8 +77,13 @@ public class MedGui {
 	private Admin ad;
 	private JTextArea resultArea;
 	private JComboBox searchSympBox;
-	JList patList;
-	JTextArea patInfoArea;
+	private JList patList;
+	private JTextArea patInfoArea;
+	private JList messageList;
+	DefaultListModel messageModel;
+	JTextArea messageArea;
+	private int userID;
+	private String sendMessageTo;
 	
 	/**
 	 * Launch the application.
@@ -96,10 +92,11 @@ public class MedGui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-//					login = new LoginDialog();
-//					login.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
-//					login.setVisible(true);
-					showFrame();
+					login = new LoginDialog();
+					login.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+					//login.setIconImage(Toolkit.getDefaultToolkit().getImage(""));//your path to mediicon
+					login.setVisible(true);
+					//showFrame();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -156,7 +153,8 @@ public class MedGui {
 		ArrayList<String> symptoms = DB.getSymps();
 
 		frame = new JFrame("MediApp");
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//frame.setIconImage(Toolkit.getDefaultToolkit().getImage("")); //your path to mediicon
 		frame.setResizable(false);
 		frame.setBounds(100, 100, 440, 413);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -218,7 +216,8 @@ public class MedGui {
 			}
 		});
 		btnSearch.setToolTipText("Search for illnesses with selected symptom");
-		btnSearch.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\search_button_blue.png"));
+		btnSearch.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\search_button_blue.png"));//comment this out
+		//btnSearch.setIcon(new ImageIcon(""));//your path to the search_button_blue
 		btnSearch.setBounds(320, 40, 100, 25);
 		btnSearch.setFont(new Font("Times New Roman", Font.PLAIN, 16));
 		searchPanel.add(btnSearch);
@@ -247,7 +246,8 @@ public class MedGui {
 		resultPane.setViewportView(resultArea);
 		
 		JLabel searchBackLbl = new JLabel("");
-		searchBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));
+		searchBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));//comment this out
+		searchBackLbl.setIcon(new ImageIcon(""));//your path to Medical Symbol
 		searchBackLbl.setBounds(0, 0, 432, 357);
 		searchPanel.add(searchBackLbl);
 		
@@ -414,67 +414,162 @@ public class MedGui {
 		messagePanel = new JPanel();
 		messagePanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Messages from:");
-		lblNewLabel.setForeground(Color.WHITE);
-		lblNewLabel.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-		lblNewLabel.setBounds(10, 10, 100, 20);
-		messagePanel.add(lblNewLabel);
+		JLabel messageLbl = new JLabel("Messages from:");
+		messageLbl.setForeground(Color.WHITE);
+		messageLbl.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		messageLbl.setBounds(10, 10, 100, 20);
+		messagePanel.add(messageLbl);
 		
-		JList list = new JList();
-		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		list.setToolTipText("List of your messages");
-		list.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		list.setBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.textText));
-		list.setBounds(10, 35, 125, 200);
-		messagePanel.add(list);
+		JScrollPane messagePane = new JScrollPane();
+		messagePane.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, SystemColor.textHighlight, SystemColor.info, SystemColor.textText, null));
+		messagePane.setBounds(145, 35, 270, 220);
+		messagePanel.add(messagePane);
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setViewportBorder(new SoftBevelBorder(BevelBorder.LOWERED, SystemColor.textHighlight, SystemColor.info, SystemColor.textText, null));
-		scrollPane_1.setBounds(145, 35, 270, 199);
-		messagePanel.add(scrollPane_1);
+		messageArea = new JTextArea();
+		messageArea.setEditable(false);
+		messageArea.setWrapStyleWord(true);
+		messageArea.setLineWrap(true);
+		messageArea.setToolTipText("Message contents");
+		messagePane.setViewportView(messageArea);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setToolTipText("Message contents");
-		scrollPane_1.setViewportView(textArea);
+		JButton sendBtn = new JButton("Send");
+		sendBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//get text from the area and send it as a message to the predetermined patient
+				String message = messageArea.getText();
+				int from = userID;
+				String to = sendMessageTo;
+				boolean sent = DB.sendMessage(from, to, message, login.getUserType());
+				if(sent)
+				{
+					messageArea.setText("Message sent");
+					messageArea.setEditable(false);
+					sendBtn.setEnabled(false);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Message was not sent.",
+						    "Error",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
+			}
+		});
+		sendBtn.setEnabled(false);
+		sendBtn.setFont(new Font("Times New Roman", Font.BOLD, 14));
+		sendBtn.setBounds(340, 265, 75, 25);
 		
 		JButton btnSendMessage = new JButton("New Message");
 		btnSendMessage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//popup dialog to pick who to send the message to
 				//clear the text area and make it editable
+				if(login.getUserType().equals("D"))
+				{
+					ArrayList<String> patients = DB.getPatients(userID);
+					String[] pats = new String[patients.size()];
+					for(int i = 0; i < patients.size(); i++)
+					{
+						pats[i] = patients.get(i);
+					}
+					sendMessageTo = (String)JOptionPane.showInputDialog(null, "Select a patient", "Add Patient", JOptionPane.QUESTION_MESSAGE, null, pats, pats[0]);
+					try
+					{
+						if(!sendMessageTo.equals(null))
+						{
+							messageArea.setText("");
+							sendBtn.setEnabled(true);
+							messageArea.setEditable(true);
+						}
+					}
+					catch(NullPointerException e)
+					{
+						
+					}
+				}
+				else
+				{
+					ArrayList<String> doctor = DB.getPatDocs(userID);
+					String[] docs = new String[doctor.size()];
+					for(int i = 0; i < doctor.size(); i++)
+					{
+						docs[i] = doctor.get(i);
+					}
+					sendMessageTo = (String)JOptionPane.showInputDialog(null, "Select a patient", "Add Patient", JOptionPane.QUESTION_MESSAGE, null, docs, docs[0]);
+					try
+					{
+						if(!sendMessageTo.equals(null))
+						{
+							messageArea.setText("");
+							sendBtn.setEnabled(true);
+							messageArea.setEditable(true);
+						}
+					}
+					catch(NullPointerException e)
+					{
+						
+					}
+				}
 			}
 		});
 		btnSendMessage.setToolTipText("Compose and send a new message");
 		btnSendMessage.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnSendMessage.setBounds(10, 245, 150, 25);
+		btnSendMessage.setBounds(10, 265, 150, 25);
 		messagePanel.add(btnSendMessage);
+		
+		messageList = new JList();
+		messageList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				//display message from the selected person
+				String selMes = (String) messageList.getSelectedValue();
+				messageArea.setEditable(false);
+				sendBtn.setEnabled(false);
+				try
+				{
+					String text = DB.getText(selMes, login.getUserType(), userID);
+					messageArea.setText(text);
+				}catch(NullPointerException e)
+				{
+					messageArea.setText("No message selected.");
+				}
+			}
+		});
+		messageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		messageList.setToolTipText("List of your messages");
+		messageList.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		messageList.setBorder(new EtchedBorder(EtchedBorder.RAISED, SystemColor.textHighlight, SystemColor.textText));
+		messageList.setBounds(10, 35, 125, 220);
+		messagePanel.add(messageList);
 		
 		JButton btnDeleteMessage = new JButton("Delete Message");
 		btnDeleteMessage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//delete the selected message and update message list
+				String selMes = (String) messageList.getSelectedValue();
+				boolean deleted = DB.delMessage(selMes, login.getUserType(), userID);
+				if(deleted)
+				{
+					updateMessages(userID ,login.getUserType());
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(frame,
+						    "Message could not be deleted.",
+						    "Error",
+						    JOptionPane.PLAIN_MESSAGE);
+				}
 			}
 		});
 		btnDeleteMessage.setToolTipText("Delete the selected message");
 		btnDeleteMessage.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnDeleteMessage.setBounds(10, 280, 150, 25);
+		btnDeleteMessage.setBounds(10, 300, 150, 25);
 		messagePanel.add(btnDeleteMessage);
+		messagePanel.add(sendBtn);
 		
-		JButton btnNewButton = new JButton("Send");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//get text from the area and send it as a message to the predetermined patient
-			}
-		});
-		btnNewButton.setEnabled(false);
-		btnNewButton.setFont(new Font("Times New Roman", Font.BOLD, 14));
-		btnNewButton.setBounds(340, 245, 75, 25);
-		messagePanel.add(btnNewButton);
-		
-		JLabel lblNewLabel_2 = new JLabel("");
-		lblNewLabel_2.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));
-		lblNewLabel_2.setBounds(0, 0, 430, 357);
-		messagePanel.add(lblNewLabel_2);
+		JLabel messageBackLbl = new JLabel("");
+		messageBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));
+		messageBackLbl.setBounds(0, 0, 430, 357);
+		messagePanel.add(messageBackLbl);
 		
 		dbEditPanel = new JPanel();
 		dbEditPanel.setLayout(null);
@@ -969,79 +1064,82 @@ public class MedGui {
 		patProfBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\Medical Symbol.jpg"));
 		patProfBackLbl.setBounds(0, 0, 430, 357);
 		profilePatPanel.add(patProfBackLbl);
-		
-		tabbedPane.addTab("Database", null, this.dbEditPanel, null);
-		tabbedPane.addTab("Users", null, this.userEditPanel, null);
-		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
-		tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
-		tabbedPane.addTab("Profile", null, this.docProfilePanel, null);
-		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+	
+//		tabbedPane.addTab("Database", null, this.dbEditPanel, null);
+//		tabbedPane.addTab("Users", null, this.userEditPanel, null);
+//		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+//		tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
+//		tabbedPane.addTab("Profile", null, this.docProfilePanel, null);
+//		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
 		
 		//add the user specific tabs to the frame
 		if(login.getUserType().equals("A"))
 		{
 			String username = login.getUsername();
-			int id = DB.getID(username);
-			String name = DB.getName(id, "A");
+			userID = DB.getID(username);
+			String name = DB.getName(userID, "A");
 			String fName = name.substring(0, name.indexOf(" "));
 			String lName = name.substring(name.indexOf(" "), name.length() - 1);
-			ad = new Admin(id, fName, lName);
+			ad = new Admin(userID, fName, lName);
 			tabbedPane.addTab("Database", null, this.dbEditPanel, null);
 			tabbedPane.addTab("Users", null, this.userEditPanel, null);
 		}
 		else if(login.getUserType().equals("D"))
 		{
 			String username = login.getUsername();
-			int id = DB.getID(username);
-			String name = DB.getName(id, "D");
+			userID = DB.getID(username);
+			String name = DB.getName(userID, "D");
 			String fName = name.substring(0, name.indexOf(" "));
 			String lName = name.substring(name.indexOf(" "), name.length() - 1);
-			String spec = DB.getSpec(id);
-			doc = new Doctor(id, fName, lName, spec);
+			String spec = DB.getSpec(userID);
+			doc = new Doctor(userID, fName, lName, spec);
 			tabbedPane.addTab("Messaging", null, this.messagePanel, null);
 			tabbedPane.addTab("Patients", null, this.docProfilePanel, null);
 			
 			//docNameLbl docIDLbl docSpecLbl
-			docNameLbl.setText(DB.getName(id, "D"));
-			docIDLbl.setText("ID: " + id);
+			docNameLbl.setText(DB.getName(userID, "D"));
+			docIDLbl.setText("ID: " + userID);
 			docSpecLbl.setText(spec);
 			
-			ArrayList<String> patients = DB.getPatients(id);
+			ArrayList<String> patients = DB.getPatients(userID);
 			DefaultListModel patientsMod = new DefaultListModel();
 			for(int i = 0; i < patients.size(); i++)
 			{
 				patientsMod.addElement(patients.get(i));
 			}
 			patList.setModel(patientsMod);
+			
+			updateMessages(userID, "D");
 		}
 		else if(login.getUserType().equals("P"))
 		{
 			String username = login.getUsername();
-			int id = DB.getID(username);
-			String patName = DB.getName(id, "P");
+			userID = DB.getID(username);
+			String patName = DB.getName(userID, "P");
 			String fName = patName.substring(0, patName.indexOf(" "));
 			String lName = patName.substring(patName.indexOf(" "), patName.length() - 1);
-			pat = new Patient(id, fName, lName, DB.getHeight(id), DB.getWeight(id), DB.getInsurance(id));
+			pat = new Patient(userID, fName, lName, DB.getHeight(userID), DB.getWeight(userID), DB.getInsurance(userID));
 			tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
 			tabbedPane.addTab("Messaging", null, this.messagePanel, null);
 			
-			patNameLbl.setText(DB.getName(id, "P"));
+			patNameLbl.setText(DB.getName(userID, "P"));
 			heightLbl.setText("Height: " + pat.getHeight() + "''");
 			weightLbl.setText("Weight: " + pat.getWeight() + " lbs.");
 			insurLbl.setText("Insurance: " + pat.getInsurance());
-			idLbl.setText("ID: " + id);
+			idLbl.setText("ID: " + userID);
 			
 			//doctors area
-			ArrayList<String> patSymps = DB.getPatSymps(id);
+			ArrayList<String> patSymps = DB.getPatSymps(userID);
 			for(int i = 0; i < patSymps.size(); i++)
 			{
 				patSympsArea.append(patSymps.get(i) + "\n");
 			}
-			ArrayList<String> docs = DB.getPatDocs(id);
+			ArrayList<String> docs = DB.getPatDocs(userID);
 			for(int i = 0; i <docs.size(); i++)
 			{
 				docsArea.append(docs.get(i) + "\n");
 			}
+			updateMessages(userID, "P");
 		}
 		
 		frame.setVisible(false);
@@ -1110,6 +1208,17 @@ public class MedGui {
 		frame.validate();
 	}
 	
+	public void updateMessages(int id, String type)
+	{
+		ArrayList<String> messages = DB.getMessages(id, type);
+		messageModel = new DefaultListModel();
+		for(int i = 0; i < messages.size(); i++)
+		{
+			messageModel.addElement(messages.get(i));
+		}
+		messageList.setModel(messageModel);
+	}
+	
 	public static void updateUserList()
 	{
 		DefaultListModel newList = new DefaultListModel();
@@ -1134,4 +1243,11 @@ public class MedGui {
 		frame.repaint();
 		frame.validate();
 	}
+	
+//	public ArrayList<String> getMessages(int id)
+//	{
+//		ArrayList<String> from = new ArrayList<String>();
+//		
+//		return from;
+//	}
 }
