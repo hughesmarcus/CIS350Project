@@ -31,19 +31,6 @@ public class addIllnessDialog extends JDialog {
 	private JTextField nameField;
 	private DBAccess db;
 	private ArrayList<String> newSymptoms;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			addIllnessDialog dialog = new addIllnessDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Create the dialog.
@@ -51,7 +38,7 @@ public class addIllnessDialog extends JDialog {
 	public addIllnessDialog() {
 		db = new DBAccess();
 		newSymptoms = new ArrayList<String>();
-		
+		setVisible(true);
 		setFont(new Font("Dialog", Font.PLAIN, 12));
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
 		setTitle("Add Illness");
@@ -131,7 +118,7 @@ public class addIllnessDialog extends JDialog {
 					public void actionPerformed(ActionEvent arg0) {
 						String illName = nameField.getText();
 						ArrayList<String> add = db.addIll(illName, newSymptoms);
-						MedGui.updateIllList();
+						MedGui.updateIllnessList();
 						nameField.setText("");
 						sympsArea.setText("");
 						setVisible(false);
