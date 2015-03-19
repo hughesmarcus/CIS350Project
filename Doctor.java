@@ -4,6 +4,7 @@ public class Doctor {
 	private String dID;
 	private String fName;
 	private String lName;
+	private String dSpecial;
 	private ArrayList<Patient> Patients;
 
 	/**
@@ -11,12 +12,31 @@ public class Doctor {
 	 * @param id
 	 * @param first 
 	 * @param last
+	 * @param special
 	 */
-	public Doctor(String id, String first, String last) {
+	public Doctor(String id, String special, String first, String last) {
 		dID = id;
 		fName = first;
 		lName = last;
+		dSpecial = special;
 
+	}
+	
+	/**
+	 * 
+	 * @return dSpecial
+	 */
+	public String getSpecial(){
+		return dSpecial;
+	}
+	
+	/**
+	 * 
+	 * @param special
+	 */
+	public void setSpecial(String special){
+		this.dSpecial = special;
+		
 	}
 
 	/**
