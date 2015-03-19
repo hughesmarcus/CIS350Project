@@ -34,29 +34,17 @@ public class UserDialog extends JDialog {
 	private JTextField usernameField;
 	private JTextField passField;
 	private DBAccess DB = new DBAccess() ;
-	static JComboBox userTypeBox;
-	static JLabel messageLbl;
+	private static JComboBox userTypeBox;
+	private static JLabel messageLbl;
 	private okListener okListen;
-	JButton okButtonEdit;
-	String user_name;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			UserDialog dialog = new UserDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private JButton okButtonEdit;
+	private String user_name;
 
 	/**
 	 * Create the dialog.
 	 */
 	public UserDialog() {//for the add user button	
+		setVisible(true);
 		setTitle("Add User");
 		setType(Type.POPUP);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
