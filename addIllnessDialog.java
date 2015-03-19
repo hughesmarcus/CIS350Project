@@ -40,7 +40,8 @@ public class addIllnessDialog extends JDialog {
 		newSymptoms = new ArrayList<String>();
 		setVisible(true);
 		setFont(new Font("Dialog", Font.PLAIN, 12));
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setTitle("Add Illness");
 		setType(Type.POPUP);
 		setAlwaysOnTop(true);
