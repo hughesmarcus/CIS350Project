@@ -47,7 +47,8 @@ public class UserDialog extends JDialog {
 		setVisible(true);
 		setTitle("Add User");
 		setType(Type.POPUP);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 405, 250);
 		getContentPane().setLayout(new BorderLayout());
