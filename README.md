@@ -1,2 +1,0 @@
-# Cis350
-mediapp
