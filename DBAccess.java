@@ -541,22 +541,23 @@ public class DBAccess {
 	}
 	
 	/**
-	 * retrieves the names of all the patients that the given doctor sees
+	 * retrieves the patient objects of all the patients that the given doctor sees
 	 * @param id
 	 * @return patients
 	 */
-	public ArrayList<String> getPatientsLess(int id)
+	public ArrayList<Patient> getPatientsLess(int id)
 	{
-		ArrayList<String> patients = new ArrayList<String>();
+		ArrayList<Patient> patients = new ArrayList<Patient>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT Fname, Lname FROM illnessdb.patient WHERE pID NOT IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ");");
+					.executeQuery("SELECT username FROM illnessdb.users WHERE userID IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ");");
 			while (res.next()) {
-				patients.add(res.getString("Fname") + " " + res.getString("Lname"));
+				Patient p = getPatOb(res.getString("username"));
+				patients.add(p);
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -1115,5 +1116,28 @@ public class DBAccess {
 			e.printStackTrace();
 		}
 		return sent;
+	}
+	
+	public Doctor getDocOb(String username)
+	{
+		Doctor d = null;
+		int userID = getID(username);
+		String name = getName(userID, "D");
+		String fName = name.substring(0, name.indexOf(" "));
+		String lName = name.substring(name.indexOf(" "), name.length());
+		String spec = getSpec(userID);
+		d = new Doctor(userID, fName, lName, spec);
+		return d;
+	}
+	
+	public Patient getPatOb(String username)
+	{
+		Patient p = null;
+		int userID = getID(username);
+		String patName = getName(userID, "P");
+		String fName = patName.substring(0, patName.indexOf(" "));
+		String lName = patName.substring(patName.indexOf(" "), patName.length());
+		p = new Patient(userID, fName, lName, getHeight(userID), getWeight(userID), getInsurance(userID));
+		return p;
 	}
 }
