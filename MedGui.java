@@ -120,6 +120,7 @@ public class MedGui {
 	 * Show Frame.
 	 */
 	public static void showFrame() {
+		//MedGui test = new MedGui("", "");
 		frame.setVisible(true);
 	}
 
@@ -323,7 +324,7 @@ public class MedGui {
 			}
 		});
 		btnEditSymptom.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnEditSymptom.setBounds(155, 295, 150, 25);
+		btnEditSymptom.setBounds(155, 295, 160, 25);
 		docProfilePanel.add(btnEditSymptom);
 		
 		JButton btnAddPatient = new JButton("Add Patient");
@@ -331,10 +332,10 @@ public class MedGui {
 		btnAddPatient.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				ArrayList<Patient> patients = DB.getPatientsLess(doc.getdID());
-				Patient[] pats = new Patient[patients.size()];
+				String[] pats = new String[patients.size()];
 				for(int i = 0; i < patients.size(); i++)
 				{
-					pats[i] = patients.get(i);
+					pats[i] = patients.get(i).getfName() + " " + patients.get(i).getlName();
 				}
 				String selPat = (String)JOptionPane.showInputDialog(null, "Select a patient", "Add Patient", JOptionPane.QUESTION_MESSAGE, null, pats, pats[0]);
 					int dID = doc.getdID();
@@ -342,8 +343,6 @@ public class MedGui {
 				try
 				{
 					pID = DB.getID(selPat.substring(0, selPat.indexOf(" ")), selPat.substring(selPat.indexOf(" ") + 1, selPat.length()));
-					System.out.println(selPat.substring(0, selPat.indexOf(" ")) + selPat.substring(selPat.indexOf(" ") + 1, selPat.length()));
-					System.out.println(dID + " " + pID);
 				}catch(NullPointerException err)
 				{
 					
@@ -351,18 +350,18 @@ public class MedGui {
 				boolean add = DB.addPatient(dID, pID);
 				if(add)
 				{
-					ArrayList<String> allPats = DB.getPatients(dID);
-					DefaultListModel patientsMod = new DefaultListModel();
-					for(int i = 0; i < patients.size(); i++)
+					ArrayList<Patient> allPats = DB.getPatients(dID);
+					DefaultListModel pattsMod = new DefaultListModel();
+					for(int i = 0; i < allPats.size(); i++)
 					{
-						patientsMod.addElement(patients.get(i));
+						pattsMod.addElement(allPats.get(i).getfName() + " " + allPats.get(i).getlName());
 					}
-					patList.setModel(patientsMod);
+					patList.setModel(pattsMod);
 				}	
 			}
 		});
 		btnAddPatient.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnAddPatient.setBounds(10, 295, 100, 25);
+		btnAddPatient.setBounds(10, 295, 125, 25);
 		docProfilePanel.add(btnAddPatient);
 		
 		JButton btnRemovePatient = new JButton("Remove Patient");
@@ -373,15 +372,14 @@ public class MedGui {
 				int dId = doc.getdID();
 				int pId = DB.getID(selPat.substring(0, selPat.indexOf(" ")), selPat.substring(selPat.indexOf(" ") + 1, selPat.length()));
 				boolean remove = DB.removePatient(dId, pId);
-				System.out.println(remove);
 				if(remove)
 				{
 					//update patList
-					ArrayList<String> patients = DB.getPatients(dId);
+					ArrayList<Patient> patients = DB.getPatients(dId);
 					DefaultListModel patientsMod = new DefaultListModel();
 					for(int i = 0; i < patients.size(); i++)
 					{
-						patientsMod.addElement(patients.get(i));
+						patientsMod.addElement(patients.get(i).getfName() + " " + patients.get(i).getlName());
 					}
 					patList.setModel(patientsMod);
 				}
@@ -409,10 +407,20 @@ public class MedGui {
 		docSpecLbl.setBounds(10, 30, 300, 20);
 		docProfilePanel.add(docSpecLbl);
 		
-		JLabel lblNewLabel_1 = new JLabel("");
-		lblNewLabel_1.setIcon(new ImageIcon("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\Medical Symbol.jpg"));
-		lblNewLabel_1.setBounds(0, 0, 429, 357);
-		docProfilePanel.add(lblNewLabel_1);
+		JButton btnPrescribeMedication = new JButton("Prescribe Medication");
+		btnPrescribeMedication.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//prescribe medication
+			}
+		});
+		btnPrescribeMedication.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		btnPrescribeMedication.setBounds(155, 323, 160, 25);
+		docProfilePanel.add(btnPrescribeMedication);
+		
+		JLabel patientBackLbl = new JLabel("");
+		patientBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\Medical Symbol.jpg"));
+		patientBackLbl.setBounds(0, 0, 429, 357);
+		docProfilePanel.add(patientBackLbl);
 		
 		messagePanel = new JPanel();
 		messagePanel.setLayout(null);
@@ -469,11 +477,11 @@ public class MedGui {
 				//clear the text area and make it editable
 				if(userType.equals("D"))
 				{
-					ArrayList<String> patients = DB.getPatients(userID);
+					ArrayList<Patient> patients = DB.getPatients(userID);
 					String[] pats = new String[patients.size()];
 					for(int i = 0; i < patients.size(); i++)
 					{
-						pats[i] = patients.get(i);
+						pats[i] = patients.get(i).getfName() + " " + patients.get(i).getlName();
 					}
 					sendMessageTo = (String)JOptionPane.showInputDialog(null, "Select a patient", "Add Patient", JOptionPane.QUESTION_MESSAGE, null, pats, pats[0]);
 					try
@@ -829,7 +837,7 @@ public class MedGui {
 					String name = DB.getName(id, type);
 					String password = DB.getPass(id);
 					String spec = DB.getSpec(id);
-					ArrayList<String> patients = DB.getPatients(id);
+					ArrayList<Patient> patients = DB.getPatients(id);
 					String pNames = "";
 					for(int i = 0; i < patients.size(); i++)
 					{
@@ -1071,6 +1079,20 @@ public class MedGui {
 		patSympsLbl.setBounds(150, 135, 80, 20);
 		profilePatPanel.add(patSympsLbl);
 		
+		JLabel lblMedications = new JLabel("Medications:");
+		lblMedications.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+		lblMedications.setForeground(Color.WHITE);
+		lblMedications.setBounds(290, 137, 85, 16);
+		profilePatPanel.add(lblMedications);
+		
+		JScrollPane medsPane = new JScrollPane();
+		medsPane.setViewportBorder(new BevelBorder(BevelBorder.LOWERED, SystemColor.textHighlight, SystemColor.inactiveCaptionText, null, null));
+		medsPane.setBounds(290, 160, 100, 180);
+		profilePatPanel.add(medsPane);
+		
+		JTextArea medsArea = new JTextArea();
+		medsPane.setViewportView(medsArea);
+		
 		JLabel patProfBackLbl = new JLabel("");
 		patProfBackLbl.setIcon(new ImageIcon("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\Medical Symbol.jpg"));
 		patProfBackLbl.setBounds(0, 0, 430, 357);
@@ -1104,7 +1126,7 @@ public class MedGui {
 			docIDLbl.setText("ID: " + doc.getdID());
 			docSpecLbl.setText("Specialization: " + doc.getSpecialization());
 			
-			doc.setPatients(DB.getPatientsLess(doc.getdID()));
+			doc.setPatients(DB.getPatients(doc.getdID()));
 			ArrayList<Patient> patients = doc.getPatients();
 			DefaultListModel patientsMod = new DefaultListModel();
 			for(int i = 0; i < patients.size(); i++)
@@ -1139,6 +1161,8 @@ public class MedGui {
 			{
 				docsArea.append(docs.get(i) + "\n");
 			}
+			//get medications and add them to the medsArea
+			
 			updateMessages(userID, "P");
 		}
 		
