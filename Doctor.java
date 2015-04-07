@@ -1,116 +1,79 @@
 import java.util.ArrayList;
-
 public class Doctor {
-	private String dID;
+	private int dID;
 	private String fName;
 	private String lName;
-	private String dSpecial;
 	private ArrayList<Patient> Patients;
+	private String specialization;
+	
+	
 
-	/**
-	 * 
-	 * @param id
-	 * @param first 
-	 * @param last
-	 * @param special
-	 */
-	public Doctor(String id, String special, String first, String last) {
+	public Doctor(int id, String first, String last)
+	{
 		dID = id;
 		fName = first;
 		lName = last;
-		dSpecial = special;
-
 	}
 	
-	/**
-	 * 
-	 * @return dSpecial
-	 */
-	public String getSpecial(){
-		return dSpecial;
+	public Doctor(int id, String first, String last, String special)
+	{
+		dID = id;
+		fName = first;
+		lName = last;
+		specialization = special;
 	}
 	
-	/**
-	 * 
-	 * @param special
-	 */
-	public void setSpecial(String special){
-		this.dSpecial = special;
-		
+	public String getSpecialization() {
+		return specialization;
 	}
 
-	/**
-	 * 
-	 * @return dID
-	 */
-	public String getdID() {
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
+	}
+	
+	public int getdID() {
 		return dID;
 	}
-
-	/**
-	 * 
-	 * @param dID
-	 */
-	public void setdID(String dID) {
+	
+	public void setdID(int dID) {
 		this.dID = dID;
 	}
-
-	/**
-	 * 
-	 * @param fName
-	 */
 	public void setdfName(String fName) {
 		this.fName = fName;
 	}
-
-	/**
-	 * @param lName
-	 * 
-	 */
 	public void setdlName(String lName) {
 		this.lName = lName;
 	}
-
-	/**
-	 * 
-	 * @return fName
-	 */
+	
 	public String getdfName() {
 		return fName;
 	}
-
-	/**
-	 * 
-	 * @return lName
-	 */
 	public String getdlName() {
 		return lName;
 	}
-
-	/**
-	 * 
-	 * @return Patients
-	 */
+	
 	public ArrayList<Patient> getPatients() {
 		return Patients;
 	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean addPatients(Patient pat) {
-
+	
+	public void setPatients(ArrayList<Patient> p)
+	{
+		Patients = p;
+	}
+	
+	public boolean addPatients(Patient pat){
 		boolean has = false;
-		for (int i = 0; i < Patients.size(); i++) {
-			if (Patients.get(i) == pat) {
+		for(int i = 0; i < Patients.size(); i++)
+		{
+			if(Patients.get(i) == pat)
+			{
 				has = true;
 			}
 		}
-		if (!has) {
+		if(!has)
+		{
 			Patients.add(pat);
 		}
 		return has;
-
 	}
 }
