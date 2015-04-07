@@ -21,14 +21,8 @@ public class LoginDialog extends JDialog {
 	private JTextField textField;
 	private JPasswordField passwordField;
 	DBAccess DB;
-	private String userT;
 	private String userName;
-	
-	public String getUserType()
-	{
-		return userT;
-	}
-	
+
 	public String getUsername()
 	{
 		return userName;
@@ -105,22 +99,21 @@ public class LoginDialog extends JDialog {
 				userName = user;
 				String pass = passwordField.getText();
 				String type = DB.login(user, pass);
-				userT = type;
 				// determine if they belong to a doctor or a patient
 				if (type.equals("D")) {
 					//display main frame in doctor view	
-					MedGui frame = new MedGui();
+					MedGui frame = new MedGui(type, user);
 					frame.showFrame();
 					setVisible(false);
 				} else if (type.equals("P")) {
-					//display main frame in paitent view
-					MedGui frame = new MedGui();
+					//display main frame in patient view
+					MedGui frame = new MedGui(type, user);
 					frame.showFrame();
 					setVisible(false);
 				}
 				else if(type.equals("A")){
 					//display main frame in admin view
-					MedGui frame = new MedGui();
+					MedGui frame = new MedGui(type, user);
 					frame.showFrame();
 					setVisible(false);
 				}
