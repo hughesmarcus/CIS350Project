@@ -394,7 +394,7 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fName +"' AND Lname = '" + lName +"';");
+					.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fName +"' AND Lname = '" + lName.trim() +"';");
 			while (res.next()) {
 				id = res.getInt("pID");
 			}
@@ -495,14 +495,14 @@ public class DBAccess {
 	}
 	
 	/**
-	 * retrieves the names of all the patients that see the desired doctor
+	 * retrieves the patient objects of all the patients that see the desired doctor
 	 * @param id
 	 * @return patients
 	 */
-	public ArrayList<String> getPatients(int id)
+	public ArrayList<Patient> getPatients(int id)
 	{
-		ArrayList<String> patients = new ArrayList<String>();
 		ArrayList<Integer> pIds = new ArrayList<Integer>();
+		ArrayList<Patient> pats = new ArrayList<Patient>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
@@ -526,22 +526,20 @@ public class DBAccess {
 						userName, password);
 				Statement st = conn.createStatement();
 				ResultSet res = st
-						.executeQuery("SELECT Fname, Lname FROM patient WHERE pID = " + pIds.get(x) +";");
+						.executeQuery("SELECT username FROM users WHERE userID = " + pIds.get(x) + ";");
 				while (res.next()) {
-					String fname = res.getString("Fname");
-					String lname = res.getString("Lname");
-					patients.add(fname + " " + lname);
+					pats.add(getPatOb(res.getString("username")));
 				}
 				conn.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return patients;
+		return pats;
 	}
 	
 	/**
-	 * retrieves the patient objects of all the patients that the given doctor sees
+	 * retrieves the patient objects of all the patients that the given doctor does not see
 	 * @param id
 	 * @return patients
 	 */
@@ -554,7 +552,7 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT username FROM illnessdb.users WHERE userID IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ");");
+					.executeQuery("SELECT username FROM illnessdb.users WHERE userID NOT IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ") AND type = 'P';");
 			while (res.next()) {
 				Patient p = getPatOb(res.getString("username"));
 				patients.add(p);
