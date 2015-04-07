@@ -42,7 +42,7 @@ public class EditSymptomsDialog extends JDialog {
 		DB = new DBAccess();
 		
 		setTitle(DB.getName(pID, "P"));
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
 		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 325, 275);
