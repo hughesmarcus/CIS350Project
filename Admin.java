@@ -6,46 +6,68 @@
  */
 
 public class Admin {
-
+	/**
+	 * 
+	 */
 	private int aID;
+	/**
+	 * 
+	 */
 	private String fName;
+	/**
+	 * 
+	 */
 	private String lName;
 	
 	
-	
-	public Admin(int id, String first, String last){
+	/**
+	 * 
+	 */
+	public Admin(final int id, String first, String last){
 		aID = id;
 		fName = first;
 		lName = last;
 		
 	}
-	
-	public int getaID(){
+	/**
+	 *@return
+	 */
+	int getaID() {
 		
 		return aID;
 	}
-	
-	public void setaID(int aID){
+	/**
+	 *@param
+	 */
+	public final void setaID(final int aID){
 		
 		this.aID = aID;
 	}
-	
-	public String getfName(){
+	/**
+	 * 
+	 */
+	public final String getfName(){
 		
 		return fName;
 	}
-	
-	public void setafName(String fName){
+	/**
+	 * 
+	 */
+	public void setafName(final String fName){
 		
 		this.fName = fName;
 	}
-	
-	public String getlName(){
+	/**
+	 * 
+	 */
+	public final String getlName(){
 		
 		return lName;
 	}
-	
-	public void setalName(String lName){
+	/**
+	 * 
+	 */
+	public void setalName(final String lName){
 		
 		this.lName = lName;
 	}
