@@ -1,103 +1,208 @@
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author marcu_000
+ *
+ */
 public class Patient {
+	/**
+	 * 
+	 */
 	private int pID;
+	/**
+	 * 
+	 */
 	private String fName;
+	/**
+	 * 
+	 */
 	private String lName;
-	private int height;//in inches
-	private int weight;//in lbs
+	/**
+	 * 
+	 */
+	private int height; // in inches
+	/**
+	 * 
+	 */
+	private int weight; // in lbs
+	/**
+	 * 
+	 */
 	private ArrayList<String> symptoms;
+	/**
+	 * 
+	 */
 	private ArrayList<String> ills;
-	private String insurance;//company name
-	
+	/**
+	 * 
+	 */
+	private String insurance; // company name
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getpID() {
 		return pID;
 	}
-	public void setpID(int pID) {
+
+	/**
+	 * 
+	 * @param pID
+	 */
+	public final void setpID(final int pID) {
 		this.pID = pID;
 	}
-	public void setfName(String fName) {
+
+	/**
+	 * 
+	 * @param fName
+	 */
+	public final void setfName(final String fName) {
 		this.fName = fName;
 	}
-	public void setlName(String lName) {
+
+	/**
+	 * 
+	 * @param lName
+	 */
+	public final void setlName(final String lName) {
 		this.lName = lName;
 	}
-	public void setHeight(int height) {
+
+	/**
+	 * 
+	 * @param height
+	 */
+	public final void setHeight(final int height) {
 		this.height = height;
 	}
-	public void setWeight(int weight) {
+
+	/**
+	 * 
+	 * @param weight
+	 */
+	public final void setWeight(final int weight) {
 		this.weight = weight;
 	}
-	public void setInsurance(String insurance) {
+
+	/**
+	 * 
+	 * @param insurance
+	 */
+	public final void setInsurance(final String insurance) {
 		this.insurance = insurance;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public String getfName() {
 		return fName;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public String getlName() {
 		return lName;
 	}
+
+	/**
+	 * 
+	 * @return
+	 */
 	public int getHeight() {
 		return height;
 	}
-	public int getWeight() {
+
+	/**
+	 * 
+	 * @return
+	 */
+	public final int getWeight() {
 		return weight;
 	}
-	public ArrayList<String> getSymptoms() {
-		return symptoms;
-	}
-	public void setSymptoms(ArrayList<String> s)
-	{
-		symptoms = s;
-	}
-	public ArrayList<String> getIlls() {
+
+	/**
+	 * 
+	 * @return
+	 */
+//	public final ArrayList<String> getSymptoms() {
+//		return symptoms;
+//	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public final ArrayList<String> getIlls() {
 		return ills;
 	}
-	public String getInsurance() {
+
+	/**
+	 * 
+	 * @return
+	 */
+	public final String getInsurance() {
 		return insurance;
 	}
-	
-	public Patient(int id, String fN, String lN, int hei, int wei, String insur)
-	{
-		pID = id;
+
+	/**
+	 * 
+	 * @param userID
+	 * @param fN
+	 * @param lN
+	 * @param hei
+	 * @param wei
+	 * @param insur
+	 */
+	public Patient(final int userID, final String fN,
+			final String lN, final int hei, final int wei,
+			final String insur) {
+		pID = userID;
 		fName = fN;
 		lName = lN;
 		height = hei;
 		weight = wei;
 		insurance = insur;
 	}
-	
-	public boolean addSymptom(String symp)
-	{
+
+	/**
+	 * 
+	 * @param symp
+	 * @return
+	 */
+	public final boolean addSymptom(final String symp) {
 		boolean has = false;
-		for(int i = 0; i < symptoms.size(); i++)
-		{
-			if(symptoms.get(i) == symp)
-			{
-				//patient already has this symptom
+		for (int i = 0; i < symptoms.size(); i++) {
+			if (symptoms.get(i) == symp) {
+				// patient already has this symptom
 				has = true;
 			}
 		}
-		if(!has)
-		{
-			//if the patient does not have that symptom
+		if (!has) {
+			// if the patient does not have that symptom
 			symptoms.add(symp);
 		}
 		return has;
 	}
-	
-	public boolean addIllness(String ill)
-	{
+
+	/**
+	 * 
+	 * @param ill
+	 * @return
+	 */
+	public final boolean addIllness(final String ill) {
 		boolean has = false;
-		for(int i = 0; i < ills.size(); i++)
-		{
-			if(ills.get(i) == ill)
-			{
+		for (int i = 0; i < ills.size(); i++) {
+			if (ills.get(i) == ill) {
 				has = true;
 			}
 		}
-		if(!has)
-		{
+		if (!has) {
 			symptoms.add(ill);
 		}
 		return has;
