@@ -37,6 +37,10 @@ public class Patient {
 	 * 
 	 */
 	private String insurance; // company name
+	
+	
+	private ArrayList<String> Medication;
+	
 
 	/**
 	 * 
@@ -141,7 +145,11 @@ public class Patient {
 	public final ArrayList<String> getIlls() {
 		return ills;
 	}
-
+	
+	public final ArrayList<String> getMedication(){
+		return Medication;
+	}
+ 
 	/**
 	 * 
 	 * @return
@@ -161,13 +169,15 @@ public class Patient {
 	 */
 	public Patient(final int userID, final String fN,
 			final String lN, final int hei, final int wei,
-			final String insur) {
+			final String insur ) {
 		pID = userID;
 		fName = fN;
 		lName = lN;
 		height = hei;
 		weight = wei;
 		insurance = insur;
+		 
+		
 	}
 
 	/**
@@ -204,6 +214,18 @@ public class Patient {
 		}
 		if (!has) {
 			symptoms.add(ill);
+		}
+		return has;
+	}
+	public final boolean addMedication(final String Meds) {
+		boolean has = false;
+		for (int i = 0; i < Medication.size(); i++) {
+			if (Medication.get(i) == Meds) {
+				has = true;
+			}
+		}
+		if (!has) {
+			symptoms.add(Meds);
 		}
 		return has;
 	}
