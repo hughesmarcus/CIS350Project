@@ -1,0 +1,172 @@
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import java.awt.Window.Type;
+import java.awt.Toolkit;
+
+import javax.swing.JLabel;
+
+import java.awt.Font;
+
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.border.EtchedBorder;
+
+import java.awt.SystemColor;
+
+import javax.swing.JComboBox;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+
+public class EditSymptomsDialog extends JDialog {
+
+	private final JPanel contentPanel = new JPanel();
+	private DBAccess DB;
+	private DefaultListModel symptomsModel;
+	/**
+	 * Create the dialog.
+	 */
+	public EditSymptomsDialog(int pID) {
+		setVisible(true);
+		DB = new DBAccess();
+		
+		setTitle(DB.getName(pID, "P"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
+		setAlwaysOnTop(true);
+		setBounds(100, 100, 325, 275);
+		getContentPane().setLayout(new BorderLayout());
+		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		contentPanel.setLayout(null);
+		
+		JLabel outLbl = new JLabel("");
+		
+		JLabel symptomsLbl = new JLabel("Symptoms:");
+		symptomsLbl.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		symptomsLbl.setBounds(20, 20, 67, 25);
+		contentPanel.add(symptomsLbl);
+		
+		JScrollPane symptomsPane = new JScrollPane();
+		symptomsPane.setViewportBorder(new EtchedBorder(EtchedBorder.LOWERED, SystemColor.activeCaption, SystemColor.activeCaptionText));
+		symptomsPane.setBounds(20, 45, 125, 150);
+		contentPanel.add(symptomsPane);
+		
+		JList symptomsList = new JList();
+		symptomsModel = new DefaultListModel();
+		ArrayList<String> patSymptoms = DB.getPatSymps(pID);
+		for(int i = 0; i < patSymptoms.size(); i++)
+		{
+			symptomsModel.addElement(patSymptoms.get(i));
+		}
+		symptomsList.setModel(symptomsModel);
+		symptomsList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent arg0) {
+				
+			}
+		});
+		symptomsPane.setViewportView(symptomsList);
+		
+		DefaultComboBoxModel symptomsBoxModel = new DefaultComboBoxModel();
+		ArrayList<String> symptoms = DB.getSymps();
+		for(int i = 0; i < symptoms.size(); i++)
+		{
+			symptomsBoxModel.addElement(symptoms.get(i));
+		}
+		JComboBox symptomsBox = new JComboBox();
+		symptomsBox.setModel(symptomsBoxModel);
+		symptomsBox.setBounds(160, 45, 140, 25);
+		contentPanel.add(symptomsBox);
+		
+		JButton btnAddSymptom = new JButton("Add Symptom");
+		btnAddSymptom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String selSymp = (String) symptomsBox.getSelectedItem();
+				boolean add = DB.giveSymptom(pID, selSymp);
+				if(add)
+				{
+					outLbl.setText("Symptom Added");
+					symptomsModel = new DefaultListModel();
+					ArrayList<String> patSymptoms = DB.getPatSymps(pID);
+					for(int i = 0; i < patSymptoms.size(); i++)
+					{
+						symptomsModel.addElement(patSymptoms.get(i));
+					}
+					symptomsList.setModel(symptomsModel);
+				}
+				else
+				{
+					outLbl.setText("Symptom could not be added");
+				}
+			}
+		});
+		btnAddSymptom.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		btnAddSymptom.setBounds(160, 81, 140, 25);
+		contentPanel.add(btnAddSymptom);
+		
+		JButton btnRemove = new JButton("Remove Symptom");
+		btnRemove.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String selSymp = (String) symptomsList.getSelectedValue();
+				boolean remove = DB.removeSymptom(pID, selSymp);
+				if(remove)
+				{
+					outLbl.setText("Symptom Removed");
+					symptomsModel = new DefaultListModel();
+					ArrayList<String> patSymptoms = DB.getPatSymps(pID);
+					for(int i = 0; i < patSymptoms.size(); i++)
+					{
+						symptomsModel.addElement(patSymptoms.get(i));
+					}
+					symptomsList.setModel(symptomsModel);
+				}
+				else
+				{
+					outLbl.setText("Symptom could not be removed");
+				}
+			}
+		});
+		btnRemove.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		btnRemove.setBounds(160, 116, 140, 25);
+		contentPanel.add(btnRemove);
+		{
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			getContentPane().add(buttonPane, BorderLayout.SOUTH);
+			
+			buttonPane.add(outLbl);
+			{
+				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						setVisible(false);
+					}
+				});
+				okButton.setActionCommand("OK");
+				buttonPane.add(okButton);
+				getRootPane().setDefaultButton(okButton);
+			}
+			{
+				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						setVisible(false);
+					}
+				});
+				buttonPane.add(cancelButton);
+			}
+		}
+	}
+}

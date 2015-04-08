@@ -74,8 +74,7 @@ public class DBAccessTestNEW extends DBAccess {
 		test0.add("chills");
 		test0.add("cough");
 		
-		assertEquals(d.addIll("pickle", test0), test1);
-		d.delIll("pickle");
+		assertEquals(d.addIll("AIDS", test0), test1);
 	}
 
 	/*
@@ -85,26 +84,24 @@ public class DBAccessTestNEW extends DBAccess {
 	public void testGetIlls() {
 		DBAccess d = new DBAccess();
 		ArrayList<String> test0 = new ArrayList<String>();
-		test0.add("AIDS");
-		test0.add("Bronchitus");
-		test0.add("Cholera");
 		test0.add("Common Cold");
-		test0.add("Cryptosporidiosis");
-		test0.add("Dengue");
-		test0.add("Ebola");
-		test0.add("Hepatitis A");
-		test0.add("Hepatitis B");
-		test0.add("Hypothermia");
-		test0.add("Influenza(flu)");
-		test0.add("Malaria");
-		test0.add("Measles");
-		test0.add("Meningitis");
-		test0.add("Pneumonia");
-		test0.add("Rotavirus");
-		test0.add("Strep Throat");
 		test0.add("Tuberculosis");
 		test0.add("Typhoid");
 		test0.add("Yellow Fever");
+		test0.add("Influenza(flu)");
+		test0.add("Pneumonia");
+		test0.add("Malaria");
+		test0.add("Hypothermia");
+		test0.add("Bronchitus");
+		test0.add("Measles");
+		test0.add("Hepatitis A");
+		test0.add("Cholera");
+		test0.add("Meningitis");
+		test0.add("Cryptosporidiosis");
+		test0.add("Rotavirus");
+		test0.add("Hepatitis B");
+		test0.add("Strep Throat");
+		test0.add("Dengue");
 		
 		assertEquals(d.getIlls(),test0);
 
@@ -118,13 +115,11 @@ public class DBAccessTestNEW extends DBAccess {
 		DBAccess d = new DBAccess();
 
 		ArrayList<String> test0 = new ArrayList<String>();
-		test0.add("aches");
 		test0.add("appetite loss");
 		test0.add("body aches");
 		test0.add("chest pain");
 		test0.add("chills");
 		test0.add("clammy skin");
-		test0.add("cold feet");
 		test0.add("confusion");
 		test0.add("constipation");
 		test0.add("cough");
@@ -147,7 +142,6 @@ public class DBAccessTestNEW extends DBAccess {
 		test0.add("muscle pain");
 		test0.add("nasal congestion");
 		test0.add("nausea");
-		test0.add("null");
 		test0.add("photophobia");
 		test0.add("rash");
 		test0.add("runny nose");
@@ -177,7 +171,7 @@ public class DBAccessTestNEW extends DBAccess {
 	@Test
 	public void testNewSymptom() {
 		DBAccess d = new DBAccess();
-		assertEquals(d.newSymptom("cold feet"), false);
+		assertEquals(d.newSymptom("cold feet"), true);
 		
 	}
 
@@ -188,7 +182,7 @@ public class DBAccessTestNEW extends DBAccess {
 	public void testDelIllSymp() {
 		DBAccess d = new DBAccess();
 		assertEquals(d.delIllSymp("Hepatitus B", "stomach pain"), true);
-		assertEquals(d.delIllSymp("Hepatitus 123", "stomach pain"), true);
+		assertEquals(d.delIllSymp("Hepatitus 123", "stomach pain"), false);
 
 	}
 
@@ -208,29 +202,23 @@ public class DBAccessTestNEW extends DBAccess {
 	public void testGetUsers() {
 		DBAccess d = new DBAccess();
 		ArrayList<String> test0 = new ArrayList<String>();
+		test0.add("doc0");
 		test0.add("admin");
+		test0.add("pat5");
+		test0.add("admin4");
+		test0.add("pat2");
+		test0.add("pat");
+		test0.add("pat4");
+		test0.add("pat3");
 		test0.add("admin2");
 		test0.add("admin3");
-		test0.add("admin4");
-		test0.add("doc");
-		test0.add("doc0");
-		test0.add("doc2");
-		test0.add("doc3");
-		test0.add("doc4");
-		test0.add("doc5");
-		test0.add("hughesma");
-		test0.add("pat");
 		test0.add("pat00");
-		test0.add("pat2");
-		test0.add("pat3");
-		test0.add("pat4");
-		test0.add("pat5");
 		test0.add("pat6");
-		
-		
-		
-		
-		
+		test0.add("doc");
+		test0.add("doc3");
+		test0.add("doc2");
+		test0.add("doc5");
+		test0.add("doc4");
 
 		assertEquals(d.getUsers(), test0);
 		
@@ -304,11 +292,11 @@ public class DBAccessTestNEW extends DBAccess {
 	@Test
 	public void testGetPatients() {
 		DBAccess d = new DBAccess();
-		ArrayList<String> test0 = new ArrayList<String>();
-		test0.add("Pam Jones");
-		test0.add("Sharon Chel");
-		test0.add("Emily Harrison");
-		test0.add("Apollo Cyrus");
+		ArrayList<Integer> test0 = new ArrayList<Integer>();
+		test0.add(13452);
+		test0.add(11324);
+		test0.add(15532);
+		test0.add(16783);
 		assertEquals(d.getPatients(98011), test0);
 		
 	}
@@ -415,7 +403,7 @@ public class DBAccessTestNEW extends DBAccess {
 	public void testRemovePatient() {
 		DBAccess d = new DBAccess();
 		assertEquals(d.removePatient(98011, 11324), true);
-		assertEquals(d.removePatient(98011, 000012), true);
+		assertEquals(d.removePatient(98011, 000012), false);
 	}
 
 	/*
@@ -424,8 +412,8 @@ public class DBAccessTestNEW extends DBAccess {
 	@Test
 	public void testAddPatient() {
 		DBAccess d = new DBAccess();
-		assertEquals(d.addPatient(98011, 444444), false);
-		assertEquals(d.addPatient(98011, 3313321), false);
+		assertEquals(d.addPatient(98011, 444444), true);
+		assertEquals(d.addPatient(98011, 3313321), true);
 		
 	}
 
@@ -446,8 +434,8 @@ public class DBAccessTestNEW extends DBAccess {
 	@Test
 	public void testGiveSymptom() {
 		DBAccess d = new DBAccess();
-		assertEquals(d.giveSymptom(11324, "cold feet"), false);
-		assertEquals(d.giveSymptom(55980, "balding"), false);
+		assertEquals(d.giveSymptom(11324, "cold feet"), true);
+		assertEquals(d.giveSymptom(55980, "balding"), true);
 		
 	}
 

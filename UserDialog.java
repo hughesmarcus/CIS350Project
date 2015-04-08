@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -17,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 import java.awt.Window.Type;
+import java.util.ArrayList;
 
 
 public class UserDialog extends JDialog {
@@ -31,30 +33,22 @@ public class UserDialog extends JDialog {
 	private JTextField specField;
 	private JTextField usernameField;
 	private JTextField passField;
-	private DBAccess DB;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			UserDialog dialog = new UserDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private DBAccess DB = new DBAccess() ;
+	private static JComboBox userTypeBox;
+	private static JLabel messageLbl;
+	private okListener okListen;
+	private JButton okButtonEdit;
+	private String user_name;
 
 	/**
 	 * Create the dialog.
 	 */
-	public UserDialog() {//for the add user button
-		DB = new DBAccess();
-		
+	public UserDialog() {//for the add user button	
+		setVisible(true);
 		setTitle("Add User");
 		setType(Type.POPUP);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 405, 250);
 		getContentPane().setLayout(new BorderLayout());
@@ -67,7 +61,11 @@ public class UserDialog extends JDialog {
 		lblUserType.setBounds(10, 12, 70, 20);
 		contentPanel.add(lblUserType);
 		
-		JComboBox userTypeBox = new JComboBox();
+		userTypeBox = new JComboBox();
+		userTypeBox.setModel(new DefaultComboBoxModel(new String[] {"", "Patient", "Doctor", "Admin"}));
+		userTypeBox.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		userTypeBox.setBounds(75, 12, 100, 20);
+		contentPanel.add(userTypeBox);
 		userTypeBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				heightField.setEnabled(false);
@@ -110,10 +108,7 @@ public class UserDialog extends JDialog {
 				}
 			}
 		});
-		userTypeBox.setModel(new DefaultComboBoxModel(new String[] {"", "Patient", "Doctor", "Admin"}));
-		userTypeBox.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		userTypeBox.setBounds(75, 12, 100, 20);
-		contentPanel.add(userTypeBox);
+		
 		{
 			JLabel idLbl = new JLabel("ID:");
 			idLbl.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -217,7 +212,7 @@ public class UserDialog extends JDialog {
 		passLbl.setBounds(180, 144, 60, 20);
 		contentPanel.add(passLbl);
 		
-		JLabel messageLbl = new JLabel("");
+		messageLbl = new JLabel("");
 		
 		passField = new JTextField();
 		passField.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -231,83 +226,8 @@ public class UserDialog extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						String type = (String) userTypeBox.getSelectedItem();
-						if(type.equals("Doctor"))
-						{
-							type = "D";
-						}
-						else if(type.equals("Patient"))
-						{
-							type = "P";
-						}
-						else if(type.equals("Admin"))
-						{
-							type = "A";
-						}
-						String fName = fNameField.getText();
-						String lName = lNameField.getText();
-						String height = heightField.getText();
-						int h = 0;
-						String weight = weightField.getText();
-						int w = 0;
-						int id = 0;
-						try
-						{
-							id = Integer.parseInt(idField.getText());
-							if(type.equals("P"))
-							{
-								if(!weight.equals("") || !weight.equals(null))
-								{
-									w = Integer.parseInt(weight);
-								}
-								if(!height.equals("") || !height.equals(null))
-								{
-									h = Integer.parseInt(height);
-								}
-							}
-						}catch(NumberFormatException e)
-						{
-							
-						}
-						String insurance = insurField.getText();
-						String specialization = specField.getText();
-						String username = usernameField.getText();
-						String password = passField.getText();
-						
-						boolean suc = false;
-						if(id < 999)
-						{
-							messageLbl.setText("Invalid User ID");
-						}
-						else
-						{
-							suc = DB.addUser(type, id, fName, lName, h, w, insurance, specialization, username, password);	
-						}
-						
-						if(suc)
-						{
-							System.out.println("successful insert");
-							//return a successful insert
-							setVisible(false);
-							idField.setText("");
-							fNameField.setText("");
-							lNameField.setText("");
-							heightField.setText("");
-							weightField.setText("");
-							messageLbl.setText("");
-							insurField.setText("");
-							specField.setText("");
-							usernameField.setText("");
-							passField.setText("");
-						}
-						else
-						{
-							messageLbl.setText("Insert Failed");
-						}
-					}
-				});
+				okListen = new okListener();
+				okButton.addActionListener(okListen);
 				buttonPane.add(messageLbl);
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
@@ -336,7 +256,92 @@ public class UserDialog extends JDialog {
 		}
 	}
 	
+	private class okListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent arg0) {
+			if(arg0.getSource() == okButtonEdit)
+			{
+				DB.delUser(user_name);//del the user using the old username since the username could have been changed
+			}
+			
+			String type = (String) UserDialog.userTypeBox.getSelectedItem();
+			if(type.equals("Doctor"))
+			{
+				type = "D";
+			}
+			else if(type.equals("Patient"))
+			{
+				type = "P";
+			}
+			else if(type.equals("Admin"))
+			{
+				type = "A";
+			}
+			String fName = fNameField.getText();
+			String lName = lNameField.getText();
+			String height = heightField.getText();
+			int h = 0;
+			String weight = weightField.getText();
+			int w = 0;
+			int id = 0;
+			try
+			{
+				id = Integer.parseInt(idField.getText());
+				if(type.equals("P"))
+				{
+					if(!weight.equals("") || !weight.equals(null))
+					{
+						w = Integer.parseInt(weight);
+					}
+					if(!height.equals("") || !height.equals(null))
+					{
+						h = Integer.parseInt(height);
+					}
+				}
+			}catch(NumberFormatException e)
+			{
+				
+			}
+			String insurance = insurField.getText();
+			String specialization = specField.getText();
+			String username = usernameField.getText();
+			String password = passField.getText();
+			
+			boolean suc = false;
+			if(id < 999)
+			{
+				UserDialog.messageLbl.setText("Invalid User ID");
+			}
+			else
+			{
+				suc = DB.addUser(type, id, fName, lName, h, w, insurance, specialization, username, password);	
+			}
+			
+			if(suc)
+			{
+				setVisible(false);
+				idField.setText("");
+				fNameField.setText("");
+				lNameField.setText("");
+				heightField.setText("");
+				weightField.setText("");
+				messageLbl.setText("");
+				insurField.setText("");
+				specField.setText("");
+				usernameField.setText("");
+				passField.setText("");
+				//update the userList on the gui to show the new user
+				MedGui.updateUserList();
+			}
+			else
+			{
+				messageLbl.setText("Insert Failed");
+			}
+		}
+	}
+	
 	public UserDialog(String type, int id, String fName, String lName, int h, int w, String insur, String spec, String un, String pass) {//for the edit user button
+		user_name = un;
 		setTitle("Edit User");
 		setType(Type.POPUP);
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
@@ -346,6 +351,25 @@ public class UserDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
+		
+		userTypeBox = new JComboBox();
+		userTypeBox.setModel(new DefaultComboBoxModel(new String[] {"", "Patient", "Doctor", "Admin"}));
+		userTypeBox.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		userTypeBox.setBounds(75, 12, 100, 20);
+		if(type.equals("A"))
+		{
+			userTypeBox.setSelectedIndex(3);
+		}
+		else if(type.equals("D"))
+		{
+			userTypeBox.setSelectedIndex(2);
+		}
+		else if(type.equals("P"))
+		{
+			userTypeBox.setSelectedIndex(1);
+		}
+		
+		contentPanel.add(userTypeBox);
 		
 		JLabel idLbl = new JLabel("ID:");
 		idLbl.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -459,10 +483,14 @@ public class UserDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
+				okButtonEdit = new JButton("OK");
+				okButtonEdit.setActionCommand("OK");
+				okListen = new okListener();
+				okButtonEdit.addActionListener(okListen);
+				messageLbl = new JLabel();
+				buttonPane.add(messageLbl);
+				buttonPane.add(okButtonEdit);
+				getRootPane().setDefaultButton(okButtonEdit);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");

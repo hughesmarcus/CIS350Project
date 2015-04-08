@@ -355,6 +355,11 @@ public class DBAccess {
 		return t;
 	}
 	
+	/**
+	 * gets the id number for the given user using their username
+	 * @param username
+	 * @return id
+	 */
 	public int getID(String username)
 	{
 		int id = 0;
@@ -376,7 +381,32 @@ public class DBAccess {
 	}
 	
 	/**
-	 * retrives and return the first and last name of the user
+	 * gets the id number for the given user using their first and last names
+	 * @param username
+	 * @return id
+	 */
+	public int getID(String fName, String lName)
+	{
+		int id = 0;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fName +"' AND Lname = '" + lName.trim() +"';");
+			while (res.next()) {
+				id = res.getInt("pID");
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return id;
+	}
+	
+	/**
+	 * retrieves and return the first and last name of the user
 	 * @param username
 	 * @param type
 	 * @return name
@@ -465,14 +495,14 @@ public class DBAccess {
 	}
 	
 	/**
-	 * retrieves the names of all the patients that see the desired doctor
+	 * retrieves the patient objects of all the patients that see the desired doctor
 	 * @param id
 	 * @return patients
 	 */
-	public ArrayList<String> getPatients(int id)
+	public ArrayList<Patient> getPatients(int id)
 	{
-		ArrayList<String> patients = new ArrayList<String>();
 		ArrayList<Integer> pIds = new ArrayList<Integer>();
+		ArrayList<Patient> pats = new ArrayList<Patient>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
@@ -496,16 +526,40 @@ public class DBAccess {
 						userName, password);
 				Statement st = conn.createStatement();
 				ResultSet res = st
-						.executeQuery("SELECT Fname, Lname FROM patient WHERE pID = " + pIds.get(x) +";");
+						.executeQuery("SELECT username FROM users WHERE userID = " + pIds.get(x) + ";");
 				while (res.next()) {
-					String fname = res.getString("Fname");
-					String lname = res.getString("Lname");
-					patients.add(fname + " " + lname);
+					pats.add(getPatOb(res.getString("username")));
 				}
 				conn.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		return pats;
+	}
+	
+	/**
+	 * retrieves the patient objects of all the patients that the given doctor does not see
+	 * @param id
+	 * @return patients
+	 */
+	public ArrayList<Patient> getPatientsLess(int id)
+	{
+		ArrayList<Patient> patients = new ArrayList<Patient>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT username FROM illnessdb.users WHERE userID NOT IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ") AND type = 'P';");
+			while (res.next()) {
+				Patient p = getPatOb(res.getString("username"));
+				patients.add(p);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return patients;
 	}
@@ -702,49 +756,386 @@ public class DBAccess {
 		}
 		return del;
 	}
-	public ArrayList<String> adddoctor(Doctor D){
-		ArrayList<String> reject = new ArrayList<String>();
-		try {
-			Class.forName(driver).newInstance();
-			Connection conn = DriverManager.getConnection(url + dbName,
-					userName, password);
-			Statement st = conn.createStatement();
-			try {
-				st.executeUpdate("INSERT INTO doctor VALUES('"+ D.getdID() +"', '" +D.getdfName()+"', '" + D.getdlName()+"', '"+D.getPatients()+ "');");
-			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				reject.add(D.getdlName());
-			}
-		
-		conn.close();
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-	return reject;
-		
-	}
-	public ArrayList<Doctor> getDoc() {
-		ArrayList<Doctor> Doc = new ArrayList<Doctor>();
+	
+	/**
+	 * returns the symptoms associated with the given patient
+	 * @param id
+	 * @return symptoms
+	 */
+	public ArrayList<String> getPatSymps(int id)
+	{
+		ArrayList<String> symptoms = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT DISTINCT Did FROM doctor;");
-			ResultSet res1 = st
-					.executeQuery("SELECT DISTINCT Dfname FROM doctor;");
-			ResultSet res2 = st
-					.executeQuery("SELECT DISTINCT Dlname FROM doctor;");
+					.executeQuery("SELECT symp from patient_symptom WHERE patID = " + id + ";");
 			while (res.next()) {
-				Doctor Doc1= new Doctor(res.getString("Did"),res1.getString("dfname"), res2.getString("dlname")  );
-				
-				Doc.add(Doc1);
+				symptoms.add(res.getString("symp"));
 			}
 			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return Doc;
+		return symptoms;
 	}
 	
+	/**
+	 * returns the names of the doctors that see the given patient
+	 * @param id
+	 * @return docs
+	 */
+	public ArrayList<String> getPatDocs(int id)
+	{
+		ArrayList<String> docs = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT Fname, Lname FROM illnessdb.doctor WHERE dID IN(SELECT doctorID from doctor_patient WHERE patientID = " + id +");");
+			while (res.next()) {
+				String fname = res.getString("Fname");
+				String lname = res.getString("Lname");
+				docs.add(fname + " " + lname);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return docs;
+	}
+	
+	/**
+	 * returns the info about the given patient
+	 * @param id
+	 * @return String info
+	 */
+	public String getPatientInfo(int id)
+	{
+		String info = "";
+		ArrayList<String> symptoms = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT * FROM patient WHERE pID = " + id + ";");
+			while (res.next()) {
+				info += "Height: " + res.getString("height") + "\n";
+				info += "Weight: " + res.getString("weight") + "\n";
+				info += "Insurance: " + res.getString("insurance") + "\n";
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		info += "Symptoms: \n"; 
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st
+					.executeQuery("SELECT symp FROM patient_symptom WHERE patID = " + id + ";");
+			while (res.next()) {
+				info += "   " + res.getString("symp") + "\n";
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return info;
+	}
+	
+	/**
+	 * attempts to remove the given patient from the list of patients associated to the given doctor
+	 * @param id
+	 * @return boolean removed
+	 */
+	public boolean removePatient(int dID, int pID)
+	{
+		boolean removed = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("DELETE FROM doctor_patient WHERE doctorID = " + dID + " AND patientID = " + pID + ";");
+				removed = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				removed = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return removed;
+	}
+	
+	/**
+	 * adds the selected patient to the active doctor
+	 * @param id
+	 * @return
+	 */
+	public boolean addPatient(int dID, int pID)
+	{
+		boolean added = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("INSERT INTO doctor_patient VALUES (" +dID+ ", " + pID + ");");
+				added = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				added = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return added;
+	}
+	
+	/**
+	 * adds the given symptom to the given patient
+	 * @param id
+	 * @param symptom
+	 * @return boolean removed
+	 */
+	public boolean removeSymptom(int id, String symptom)
+	{
+		boolean removed = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("DELETE FROM patient_symptom WHERE patID = " + id + " AND symp = '" + symptom + "';");
+				removed = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				removed = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return removed;
+	}
+	
+	/**
+	 * assigns the given symptom to the given patient
+	 * @param id
+	 * @param symptom
+	 * @return boolean added
+	 */
+	public boolean giveSymptom(int id, String symptom)
+	{
+		boolean added = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("INSERT INTO patient_symptom VALUES (" + id + ", '" + symptom + "');");
+				added = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				added = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return added;
+	}
+	
+	/**
+	 * returns the list of names of people that have sent messages to the user 
+	 * @param id
+	 * @param type
+	 * @return from
+	 */
+	public ArrayList<String> getMessages(int id, String type)
+	{
+		ArrayList<String> from = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = null;
+			if(type.equals("P"))
+			{
+				res = st
+						.executeQuery("SELECT Lname, Fname FROM doctor WHERE dID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
+			}
+			else if(type.equals("D"))
+			{
+				res = st
+					.executeQuery("SELECT Lname, Fname FROM patient WHERE pID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
+			}
+			while (res.next()) {
+				from.add(res.getString("Fname") + " " + res.getString("Lname"));
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return from;
+	}
+	
+	/**
+	 * gets the text of the message sent from the 'name' to toID
+	 * @param name
+	 * @param userType
+	 * @return String text
+	 */
+	public String getText(String name, String userType, int toID)
+	{
+		String text = "";
+		String fname = name.substring(0, name.indexOf(" "));
+		String lname = name.substring(name.indexOf(" ") + 1, name.length());
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = null;
+			if(userType.equals("P"))
+			{
+				res = st
+						.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+			}
+			else if(userType.equals("D"))
+			{
+				res = st
+					.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+			}
+			while (res.next()) {
+				text = res.getString("text");
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return text;
+	}
+	
+	/**
+	 * deletes the message from name to toID 
+	 * @param name
+	 * @param userType
+	 * @return boolean del
+	 */
+	public boolean delMessage(String name, String userType, int toID)
+	{
+		boolean del = false;
+		String fname = name.substring(0, name.indexOf(" "));
+		String lname = name.substring(name.indexOf(" ") + 1, name.length());
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				if(userType.equals("P"))
+				{
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+				}
+				else if(userType.equals("D"))
+				{
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "' AND toID = " + toID + ");");
+				}
+				del = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				del = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return del;
+	}
+	
+	/**
+	 * add the message to the message table
+	 * @param from
+	 * @param to
+	 * @param text
+	 * @param userType
+	 * @return sent
+	 */
+	public boolean sendMessage(int from, String to, String text, String userType)
+	{
+		boolean sent = false;
+		String fname = to.substring(0, to.indexOf(" "));
+		String lname = to.substring(to.indexOf(" ") + 1, to.length());
+		int toID = 0;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				if(userType.equals("D"))
+				{
+					ResultSet res = st.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
+					while(res.next())
+					{
+						toID = res.getInt("pID");
+					}
+					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
+				}
+				else 	if(userType.equals("P"))
+				{
+					ResultSet res = st.executeQuery("SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
+					while(res.next())
+					{
+						toID = res.getInt("dID");
+					}
+					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
+				}
+				sent = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				sent = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return sent;
+	}
+	
+	public Doctor getDocOb(String username)
+	{
+		Doctor d = null;
+		int userID = getID(username);
+		String name = getName(userID, "D");
+		String fName = name.substring(0, name.indexOf(" "));
+		String lName = name.substring(name.indexOf(" "), name.length());
+		String spec = getSpec(userID);
+		d = new Doctor(userID, fName, lName, spec);
+		return d;
+	}
+	
+	public Patient getPatOb(String username)
+	{
+		Patient p = null;
+		int userID = getID(username);
+		String patName = getName(userID, "P");
+		String fName = patName.substring(0, patName.indexOf(" "));
+		String lName = patName.substring(patName.indexOf(" "), patName.length());
+		p = new Patient(userID, fName, lName, getHeight(userID), getWeight(userID), getInsurance(userID));
+		return p;
+	}
 }

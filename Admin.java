@@ -7,25 +7,25 @@
 
 public class Admin {
 
-	private String aID;
+	private int aID;
 	private String fName;
 	private String lName;
 	
 	
 	
-	public Admin(String id, String first, String last){
+	public Admin(int id, String first, String last){
 		aID = id;
 		fName = first;
 		lName = last;
 		
 	}
 	
-	public String getaID(){
+	public int getaID(){
 		
 		return aID;
 	}
 	
-	public void setaID(String aID){
+	public void setaID(int aID){
 		
 		this.aID = aID;
 	}

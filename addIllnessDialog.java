@@ -21,37 +21,28 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class addIllnessDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField nameField;
-	DBAccess db;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			addIllnessDialog dialog = new addIllnessDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private DBAccess db;
+	private ArrayList<String> newSymptoms;
 
 	/**
 	 * Create the dialog.
 	 */
 	public addIllnessDialog() {
 		db = new DBAccess();
-		
+		newSymptoms = new ArrayList<String>();
+		setVisible(true);
 		setFont(new Font("Dialog", Font.PLAIN, 12));
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Dropbox\\Silas\\Java\\MediApp2\\mediicon.jpg"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setTitle("Add Illness");
-		setType(Type.POPUP);
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 452, 300);
 		getContentPane().setLayout(new BorderLayout());
@@ -72,7 +63,7 @@ public class addIllnessDialog extends JDialog {
 		
 		JLabel lblSymptoms = new JLabel("Symptoms:");
 		lblSymptoms.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		lblSymptoms.setBounds(10, 60, 70, 14);
+		lblSymptoms.setBounds(10, 60, 70, 20);
 		contentPanel.add(lblSymptoms);
 		
 		JComboBox sympsBox = new JComboBox();
@@ -96,6 +87,24 @@ public class addIllnessDialog extends JDialog {
 		sympsPane.setViewportView(sympsArea);
 		
 		JButton btnAddSymptom = new JButton("Add Symptom");
+		btnAddSymptom.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String addSymp = (String) sympsBox.getSelectedItem();
+				boolean in = false;
+				for(int i = 0; i < newSymptoms.size(); i++)
+				{
+					if(newSymptoms.get(i).equals(addSymp))
+					{
+						in = true;
+					}
+				}
+				if(!in)
+				{
+					sympsArea.append(addSymp + "\n");
+					newSymptoms.add(addSymp);
+				}
+			}
+		});
 		btnAddSymptom.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		btnAddSymptom.setBounds(240, 65, 120, 25);
 		contentPanel.add(btnAddSymptom);
@@ -105,6 +114,16 @@ public class addIllnessDialog extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("Add");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						String illName = nameField.getText();
+						ArrayList<String> add = db.addIll(illName, newSymptoms);
+						MedGui.updateIllnessList();
+						nameField.setText("");
+						sympsArea.setText("");
+						setVisible(false);
+					}
+				});
 				okButton.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
@@ -112,6 +131,13 @@ public class addIllnessDialog extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						nameField.setText("");
+						sympsArea.setText("");
+						setVisible(false);
+					}
+				});
 				cancelButton.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);

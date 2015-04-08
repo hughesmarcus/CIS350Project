@@ -18,7 +18,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testGetSpecial() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		assertEquals(d.getSpecial(), "cardiologist");
 	}
 
@@ -27,7 +27,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testSetSpecial() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		d.setSpecial("cardiologist");
 		assertEquals(d.getSpecial(), "cardiologist");
 	}
@@ -37,8 +37,8 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testGetdID() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
-		assertEquals(d.getdID(), 98011);
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
+		assertEquals(d.getdID(), "98011");
 
 	}
 
@@ -47,9 +47,9 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testSetdID() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
-		d.setdID(98011);
-		assertEquals(d.getdID(), 98011);	
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
+		d.setdID("98011");
+		assertEquals(d.getdID(), "98011");	
 		
 	}
 
@@ -58,7 +58,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testSetdfName() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		d.setdfName("Frank");
 		assertEquals(d.getdfName(), "Frank");
 		
@@ -69,7 +69,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testSetdlName() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		d.setdlName("Charles");
 		assertEquals(d.getdlName(), "Charles");
 		
@@ -80,7 +80,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testGetdfName() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		assertEquals(d.getdfName(), "Frank");
 
 	}
@@ -90,7 +90,7 @@ public class DoctorTest {
 	 */
 	@Test
 	public void testGetdlName() {
-		Doctor d = new Doctor(98011, "cardiologist", "Frank", "Charles");
+		Doctor d = new Doctor("98011", "cardiologist", "Frank", "Charles");
 		assertEquals(d.getdlName(), "Charles");
 		
 	}
