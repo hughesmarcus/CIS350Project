@@ -1,5 +1,7 @@
 import static org.junit.Assert.*;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -10,15 +12,15 @@ import org.junit.Test;
  * JUnit Testing for Patient Class
  */
 
-public class PatientTest extends Patient {
+public class PatientTest  {
 
 	/*
 	 * Testing method for getpID() in patient
 	 */
 	@Test
 	public void testGetpID() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
-		assertEquals(p.getpID(), "11324");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
+		assertEquals(p.getpID(), 11324);
 
 	}
 
@@ -27,9 +29,9 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetpID() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
-		p.setpID("11324");
-		assertEquals(p.getpID(), "11324");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
+		p.setpID(11324);
+		assertEquals(p.getpID(), 11324);
 		
 	}
 	
@@ -38,7 +40,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetfName() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		p.setfName("Hank");
 		assertEquals(p.getfName(), "Hank");
 		
@@ -49,7 +51,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetlName() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		p.setlName("Straman");
 		assertEquals(p.getlName(), "Straman");
 		
@@ -60,7 +62,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetHeight() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		p.setHeight(70);
 		assertEquals(p.getHeight(), 70);
 		
@@ -71,7 +73,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetWeight() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		p.setWeight(275);
 		assertEquals(p.getWeight(), 275);	
 		
@@ -82,7 +84,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testSetInsurance() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		p.setInsurance("priority health");
 		assertEquals(p.getInsurance(), "priority health");
 	}
@@ -92,7 +94,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testGetfName() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		assertEquals(p.getfName(), "Hank");	
 		
 	}
@@ -102,7 +104,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testGetlName() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		assertEquals(p.getlName(), "Straman");	
 		
 	}
@@ -112,7 +114,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testGetHeight() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		assertEquals(p.getHeight(), 70);
 		
 	}
@@ -122,25 +124,11 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testGetWeight() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		assertEquals(p.getWeight(), 275);
 		
 	}
 
-	/*
-	 * Testing method for getSymptoms() in patient
-	 */
-	@Test
-	public void testGetSymptoms() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
-		ArrayList <String> a = new ArrayList <String>();
-		
-		a.add("aches");
-		a.add("body aches");
-		a.add("nasal congestion");
-		
-		assertEquals(p.getSymptoms(), a);
-	}
 
 //	@Test
 //	public void testGetIlls() {
@@ -159,7 +147,7 @@ public class PatientTest extends Patient {
 	 */
 	@Test
 	public void testGetInsurance() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
+		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
 		assertEquals(p.getInsurance(), "priority health");
 	}
 
@@ -167,21 +155,21 @@ public class PatientTest extends Patient {
 	/*
 	 * Testing method for addSymptom() in patient
 	 */
-	@Test
-	public void testAddSymptom() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
-		assertEquals(p.addSymptom("balding"), false);
-		assertEquals(p.addSymptom("aches"), true);
-	}
+//	@Test
+//	public void testAddSymptom() {
+//		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
+//		assertEquals(p.addSymptom("balding"), false);
+//		assertEquals(p.addSymptom("aches"), true);
+//	}
 
 	/*
 	 * Testing method for addIllness() in patient
 	 */
-	@Test
-	public void testAddIllness() {
-		Patient p = new Patient ("11324", "Hank", "Straman", 70, 275, "priority health");
-		assertEquals(p.addIllness("Hepatitus B"), false);
-	
-	}
-	
+//	@Test
+//	public void testAddIllness() {
+//		Patient p = new Patient (11324, "Hank", "Straman", 70, 275, "priority health");
+//		assertEquals(p.addIllness("Hepatitus B"), false);
+//	
+//	}
+//	
 }
