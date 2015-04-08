@@ -43,7 +43,7 @@ public Doctor(int id, String first, String last)
 		dID = id;
 		fName = first;
 		lName = last;
-		pecialization = special;
+		specialization = special;
 
 	}
 	
@@ -52,7 +52,7 @@ public Doctor(int id, String first, String last)
 	 * @return dSpecial
 	 */
 	public final String getSpecialization(){
-		return pecialization;
+		return specialization;
 	}
 	
 	/**
