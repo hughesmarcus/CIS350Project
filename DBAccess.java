@@ -1138,4 +1138,65 @@ public class DBAccess {
 		p = new Patient(userID, fName, lName, getHeight(userID), getWeight(userID), getInsurance(userID));
 		return p;
 	}
+	
+	public ArrayList<String> getAllMeds()
+	{
+		ArrayList<String> meds = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("Select medName from medications;");
+			while (res.next()) {
+				String m = res.getString("medName");
+				meds.add(m);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return meds;
+	}
+	
+	public ArrayList<String> getPatMeds(int id)
+	{
+		ArrayList<String> meds = new ArrayList<String>();
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			ResultSet res = st.executeQuery("Select med from med_pat where pat = " + id + ";");
+			while (res.next()) {
+				String m = res.getString("med");
+				meds.add(m);
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return meds;
+	}
+	
+	public boolean prescribeMed(String med, int pID)
+	{
+		boolean pre = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				st.executeUpdate("INSERT INTO med_pat VALUES ('" + med + "', " + pID + ");");
+				pre = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				pre = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pre;
+	}
 }
