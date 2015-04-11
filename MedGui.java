@@ -81,11 +81,12 @@ public class MedGui {
 	private JTextArea patInfoArea;
 	private JList messageList;
 	DefaultListModel messageModel;
-	JTextArea messageArea;
+	private JTextArea messageArea;
 	private int userID;
 	private String sendMessageTo;
 	private String userType;
 	private String userName;
+	private DefaultListModel allMeds;
 	
 	/**
 	 * Launch the application.
@@ -94,11 +95,11 @@ public class MedGui {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					login = new LoginDialog();
-					login.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
-					//login.setIconImage(Toolkit.getDefaultToolkit().getImage(""));//your path to mediicon
-					login.setVisible(true);
-					//showFrame();
+//					login = new LoginDialog();
+//					login.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
+//					//login.setIconImage(Toolkit.getDefaultToolkit().getImage(""));//your path to mediicon
+//					login.setVisible(true);
+					showFrame();
 					
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -120,7 +121,7 @@ public class MedGui {
 	 * Show Frame.
 	 */
 	public static void showFrame() {
-		//MedGui test = new MedGui("", "");
+		MedGui test = new MedGui("", "");
 		frame.setVisible(true);
 	}
 
@@ -153,6 +154,14 @@ public class MedGui {
 			symptomList.addElement(sympNames.get(i));
 		}
 		
+		//get list of all medications
+		allMeds = new DefaultListModel();
+		ArrayList<String> meds = DB.getAllMeds();
+		for(int i = 0; i < meds.size(); i++)
+		{
+			allMeds.addElement(meds.get(i));
+		}
+		
 		//array list of all the symptoms
 		ArrayList<String> symptoms = DB.getSymps();
 
@@ -182,13 +191,13 @@ public class MedGui {
 		JList illList = new JList();
 		illList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-//				String selIll = (String) illList.getSelectedValue();
-//				ArrayList<String> assoSymp = DB.illSearch(selIll);
-//				resultArea.setText("Name: " + selIll + "\n" + "Symptoms: ");
-//				for(int i = 0; i < assoSymp.size(); i++)
-//				{
-//					resultArea.append("\n" + assoSymp.get(i));
-//				}
+				String selIll = (String) illList.getSelectedValue();
+				ArrayList<String> assoSymp = DB.illSearch(selIll);
+				resultArea.setText("Name: " + selIll + "\n" + "Symptoms: ");
+				for(int i = 0; i < assoSymp.size(); i++)
+				{
+					resultArea.append("\n" + assoSymp.get(i));
+				}
 			}
 		});
 		illList.setModel(illnessList);
@@ -201,22 +210,21 @@ public class MedGui {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				String selSymp = (String) searchSympBox.getSelectedItem();
-//				if(selSymp.equals("(Clear Search)"))
-//				{
-//					illList.setModel(illnessList);
-//				}
-//				else
-//				{
-//					ArrayList<String> assoIlls = DB.sympSearch(selSymp);
-//					DefaultListModel illMod = new DefaultListModel();
-//					for(int i = 0; i < assoIlls.size(); i++)
-//					{
-//						illMod.addElement(assoIlls.get(i));
-//					}
-//					illList.setModel(illMod);	
-//				}
-//				
+				String selSymp = (String) searchSympBox.getSelectedItem();
+				if(selSymp.equals("(Clear Search)"))
+				{
+					illList.setModel(illnessList);
+				}
+				else
+				{
+					ArrayList<String> assoIlls = DB.sympSearch(selSymp);
+					DefaultListModel illMod = new DefaultListModel();
+					for(int i = 0; i < assoIlls.size(); i++)
+					{
+						illMod.addElement(assoIlls.get(i));
+					}
+					illList.setModel(illMod);	
+				}
 			}
 		});
 		btnSearch.setToolTipText("Search for illnesses with selected symptom");
@@ -276,6 +284,7 @@ public class MedGui {
 					patInfoArea.append("ID: " + pID + "\n");
 					patInfoArea.append("Name: " + name + "\n");
 					patInfoArea.append(DB.getPatientInfo(pID));
+					//add prescribed meds
 				}catch(NullPointerException e)
 				{
 					patInfoArea.setText("No Patient Selected");
@@ -411,6 +420,36 @@ public class MedGui {
 		btnPrescribeMedication.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//prescribe medication
+				String selPat = (String)patList.getSelectedValue();
+				int patientID = DB.getID(selPat.substring(0, selPat.indexOf(" ")), selPat.substring(selPat.indexOf(" ") + 1, selPat.length()));
+				ArrayList<String> alreadyPrescribed = DB.getPatMeds(patientID);
+				ArrayList<String> medications = DB.getAllMeds();
+				//remove from medications any meds that are already prescribed to the selected patient
+				for(int i = 0; i < medications.size(); i++)
+				{
+					for(int j = 0; j < alreadyPrescribed.size(); j++)
+					{
+						if(medications.get(i).equals(alreadyPrescribed.get(j)))
+						{
+							medications.remove(i);
+						}
+					}
+				}
+				String[] medis = new String[medications.size()];
+				for(int i = 0; i < medis.length; i++)
+				{
+					medis[i] = medications.get(i);
+				}
+				String prescribe = (String)JOptionPane.showInputDialog(null, "Select a medication", "Prescribe", JOptionPane.QUESTION_MESSAGE, null, medis, medis[0]);
+				boolean prescribed = DB.prescribeMed(prescribe, patientID);
+				if(prescribed)
+				{
+					//get patient med list again and refresh
+				}
+				else
+				{
+					System.out.println("failure");
+				}
 			}
 		});
 		btnPrescribeMedication.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -1098,12 +1137,12 @@ public class MedGui {
 		patProfBackLbl.setBounds(0, 0, 430, 357);
 		profilePatPanel.add(patProfBackLbl);
 	
-//		tabbedPane.addTab("Database", null, this.dbEditPanel, null);
-//		tabbedPane.addTab("Users", null, this.userEditPanel, null);
-//		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
-//		tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
-//		tabbedPane.addTab("Patients", null, this.docProfilePanel, null);
-//		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+		tabbedPane.addTab("Database", null, this.dbEditPanel, null);
+		tabbedPane.addTab("Users", null, this.userEditPanel, null);
+		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
+		tabbedPane.addTab("Profile", null, this.profilePatPanel, null);
+		tabbedPane.addTab("Patients", null, this.docProfilePanel, null);
+		tabbedPane.addTab("Messaging", null, this.messagePanel, null);
 		
 		//add the user specific tabs to the frame
 		if(userType.equals("A"))
