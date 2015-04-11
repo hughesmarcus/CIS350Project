@@ -81,11 +81,13 @@ public class MedGui {
 	private JTextArea patInfoArea;
 	private JList messageList;
 	DefaultListModel messageModel;
-	JTextArea messageArea;
+	private JTextArea messageArea;
 	private int userID;
 	private String sendMessageTo;
 	private String userType;
 	private String userName;
+	private DefaultListModel allMedsModel;
+	private DefaultListModel patMedsModel;
 	
 	/**
 	 * Launch the application.
@@ -120,7 +122,6 @@ public class MedGui {
 	 * Show Frame.
 	 */
 	public static void showFrame() {
-		//MedGui test = new MedGui("", "");
 		frame.setVisible(true);
 	}
 
@@ -153,6 +154,14 @@ public class MedGui {
 			symptomList.addElement(sympNames.get(i));
 		}
 		
+		//get list of all medications
+		allMedsModel = new DefaultListModel();
+		ArrayList<String> meds = DB.getAllMeds();
+		for(int i = 0; i < meds.size(); i++)
+		{
+			allMedsModel.addElement(meds.get(i));
+		}
+		
 		//array list of all the symptoms
 		ArrayList<String> symptoms = DB.getSymps();
 
@@ -182,13 +191,13 @@ public class MedGui {
 		JList illList = new JList();
 		illList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent arg0) {
-//				String selIll = (String) illList.getSelectedValue();
-//				ArrayList<String> assoSymp = DB.illSearch(selIll);
-//				resultArea.setText("Name: " + selIll + "\n" + "Symptoms: ");
-//				for(int i = 0; i < assoSymp.size(); i++)
-//				{
-//					resultArea.append("\n" + assoSymp.get(i));
-//				}
+				String selIll = (String) illList.getSelectedValue();
+				ArrayList<String> assoSymp = DB.illSearch(selIll);
+				resultArea.setText("Name: " + selIll + "\n" + "Symptoms: ");
+				for(int i = 0; i < assoSymp.size(); i++)
+				{
+					resultArea.append("\n" + assoSymp.get(i));
+				}
 			}
 		});
 		illList.setModel(illnessList);
@@ -201,22 +210,21 @@ public class MedGui {
 		JButton btnSearch = new JButton("Search");
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-//				String selSymp = (String) searchSympBox.getSelectedItem();
-//				if(selSymp.equals("(Clear Search)"))
-//				{
-//					illList.setModel(illnessList);
-//				}
-//				else
-//				{
-//					ArrayList<String> assoIlls = DB.sympSearch(selSymp);
-//					DefaultListModel illMod = new DefaultListModel();
-//					for(int i = 0; i < assoIlls.size(); i++)
-//					{
-//						illMod.addElement(assoIlls.get(i));
-//					}
-//					illList.setModel(illMod);	
-//				}
-//				
+				String selSymp = (String) searchSympBox.getSelectedItem();
+				if(selSymp.equals("(Clear Search)"))
+				{
+					illList.setModel(illnessList);
+				}
+				else
+				{
+					ArrayList<String> assoIlls = DB.sympSearch(selSymp);
+					DefaultListModel illMod = new DefaultListModel();
+					for(int i = 0; i < assoIlls.size(); i++)
+					{
+						illMod.addElement(assoIlls.get(i));
+					}
+					illList.setModel(illMod);	
+				}
 			}
 		});
 		btnSearch.setToolTipText("Search for illnesses with selected symptom");
@@ -276,6 +284,19 @@ public class MedGui {
 					patInfoArea.append("ID: " + pID + "\n");
 					patInfoArea.append("Name: " + name + "\n");
 					patInfoArea.append(DB.getPatientInfo(pID));
+					patInfoArea.append("Medications: ");
+					ArrayList<String> patMeds = DB.getPatMeds(pID);
+					for(int i = 0; i < patMeds.size(); i++)
+					{
+						if(i < patMeds.size() - 1)
+						{
+							patInfoArea.append(patMeds.get(i) + ", ");
+						}
+						else
+						{
+							patInfoArea.append(patMeds.get(i));
+						}
+					}
 				}catch(NullPointerException e)
 				{
 					patInfoArea.setText("No Patient Selected");
@@ -411,6 +432,52 @@ public class MedGui {
 		btnPrescribeMedication.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//prescribe medication
+				String selPat = (String)patList.getSelectedValue();
+				int patientID = DB.getID(selPat.substring(0, selPat.indexOf(" ")), selPat.substring(selPat.indexOf(" ") + 1, selPat.length()));
+				ArrayList<String> alreadyPrescribed = DB.getPatMeds(patientID);
+				ArrayList<String> medications = DB.getAllMeds();
+				//remove from medications any meds that are already prescribed to the selected patient
+				for(int i = 0; i < medications.size(); i++)
+				{
+					for(int j = 0; j < alreadyPrescribed.size(); j++)
+					{
+						if(medications.get(i).equals(alreadyPrescribed.get(j)))
+						{
+							medications.remove(i);
+						}
+					}
+				}
+				String[] medis = new String[medications.size()];
+				for(int i = 0; i < medis.length; i++)
+				{
+					medis[i] = medications.get(i);
+				}
+				String prescribe = (String)JOptionPane.showInputDialog(null, "Select a medication", "Prescribe", JOptionPane.QUESTION_MESSAGE, null, medis, medis[0]);
+				boolean prescribed = DB.prescribeMed(prescribe, patientID);
+				if(prescribed)
+				{
+					ArrayList<String> newMeds = DB.getPatMeds(patientID);
+					patInfoArea.setText("");
+					patInfoArea.append("ID: " + patientID + "\n");
+					patInfoArea.append("Name: " + selPat + "\n");
+					patInfoArea.append(DB.getPatientInfo(patientID));
+					patInfoArea.append("Medications: ");
+					for(int i = 0; i < newMeds.size(); i++)
+					{
+						if(i < newMeds.size() - 1)
+						{
+							patInfoArea.append(newMeds.get(i) + ", ");
+						}
+						else
+						{
+							patInfoArea.append(newMeds.get(i));
+						}
+					}
+				}
+				else
+				{
+					System.out.println("failure");
+				}
 			}
 		});
 		btnPrescribeMedication.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -1162,6 +1229,12 @@ public class MedGui {
 				docsArea.append(docs.get(i) + "\n");
 			}
 			//get medications and add them to the medsArea
+			ArrayList<String> patMeds = DB.getPatMeds(pat.getpID());
+			medsArea.setText("");
+			for(int i = 0; i < patMeds.size(); i++)
+			{
+				medsArea.append(patMeds.get(i) + "\n");
+			}
 			
 			updateMessages(userID, "P");
 		}
@@ -1212,19 +1285,6 @@ public class MedGui {
 			newList.addElement(usernames.get(i));
 		}
 		userList.setModel(newList);
-		frame.validate();
-	}
-/**
- * 
- * @return
- */
-	public JTabbedPane getTabbedPane() {
-		return tabbedPane;
-	}
-	
-	public void updateFrame()
-	{
-		frame.repaint();
 		frame.validate();
 	}
 }
