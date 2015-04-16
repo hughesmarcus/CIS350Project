@@ -10,14 +10,14 @@ import java.util.ArrayList;
  *
  */
 public class DBAccess {
-	private final String url = "jdbc:mysql://localhost:3306/";
+	private final String url = "jdbc:mysql://127.0.0.1:3306/";
 	private final String dbName = "illnessdb";
 	private final String driver = "com.mysql.jdbc.Driver";
 	private final int portNumber = 3306;
 	private final String dbms = "mysql";
-	private final String serverName = "localhost";
-	private final String userName = "vincensi";
-	private final String password = "Cis350";
+	private final String serverName = "127.0.0.1";
+	private final String userName = "hughesma";
+	private final String password = "1grandvalley";
 
 /**
  * 
@@ -1115,7 +1115,11 @@ public class DBAccess {
 		}
 		return sent;
 	}
-	
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
 	public Doctor getDocOb(String username)
 	{
 		Doctor d = null;
@@ -1127,7 +1131,11 @@ public class DBAccess {
 		d = new Doctor(userID, fName, lName, spec);
 		return d;
 	}
-	
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
 	public Patient getPatOb(String username)
 	{
 		Patient p = null;
@@ -1138,7 +1146,10 @@ public class DBAccess {
 		p = new Patient(userID, fName, lName, getHeight(userID), getWeight(userID), getInsurance(userID));
 		return p;
 	}
-	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<String> getAllMeds()
 	{
 		ArrayList<String> meds = new ArrayList<String>();
@@ -1158,7 +1169,11 @@ public class DBAccess {
 		}
 		return meds;
 	}
-	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	public ArrayList<String> getPatMeds(int id)
 	{
 		ArrayList<String> meds = new ArrayList<String>();
@@ -1178,7 +1193,12 @@ public class DBAccess {
 		}
 		return meds;
 	}
-	
+	/**
+	 * 
+	 * @param med
+	 * @param pID
+	 * @return
+	 */
 	public boolean prescribeMed(String med, int pID)
 	{
 		boolean pre = false;
@@ -1198,5 +1218,33 @@ public class DBAccess {
 			e.printStackTrace();
 		}
 		return pre;
+	}
+	/**
+	 * 
+	 * @param date
+	 * @param pID
+	 * @param dID
+	 * @return
+	 */
+	public boolean addSced(String date, int pID , int dID){
+		boolean pre = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				String sql = "UPDATE Doctor_Patient " + "SET appointment = date WHERE patientID = pID && doctorID = dID ";
+				st.executeUpdate(sql);
+				pre = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				pre = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pre;
+		
 	}
 }
