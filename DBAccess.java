@@ -1219,14 +1219,14 @@ public class DBAccess {
 		}
 		return pre;
 	}
-	/**
-	 * 
+/**
+	 * Add data of appiontment
 	 * @param date
 	 * @param pID
 	 * @param dID
 	 * @return
 	 */
-	public boolean addSced(String date, int pID , int dID){
+	public boolean addappointment(String date, int pID , int dID){
 		boolean pre = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -1247,4 +1247,33 @@ public class DBAccess {
 		return pre;
 		
 	}
+	/**
+	 * delete data of appiontment 
+	 * @param date
+	 * @param pID
+	 * @param dID
+	 * @return
+	 */
+	public boolean delappointment(String date, int pID , int dID){
+		boolean pre = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				String sql = "U Doctor_Patient " + "SET appointment = null WHERE patientID = pID && doctorID = dID && appointment = date ";
+				st.executeUpdate(sql);
+				pre = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				pre = false;//failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pre;
+		
+	}
+	
 }
