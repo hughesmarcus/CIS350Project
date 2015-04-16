@@ -6,22 +6,47 @@ import java.util.ArrayList;
 
 /**
  * Class to access the database and return the needed information.
+ * 
  * @author silas
  *
  */
 public class DBAccess {
+	/**
+	 * url sting for address.
+	 */
 	private final String url = "jdbc:mysql://127.0.0.1:3306/";
-	private final String dbName = "illnessdb";
+	/**
+	 * name of DB.
+	 */
+	private final String dbName = "illnessdb1";
+	/**
+	 * driver sting.
+	 */
 	private final String driver = "com.mysql.jdbc.Driver";
+	/**
+	 * portnumber.
+	 */
 	private final int portNumber = 3306;
+	/**
+	 * name of dbms.
+	 */
 	private final String dbms = "mysql";
+	/**
+	 * server name.
+	 */
 	private final String serverName = "127.0.0.1";
+	/**
+	 * username.
+	 */
 	private final String userName = "hughesma";
+	/**
+	 * password.
+	 */
 	private final String password = "1grandvalley";
 
-/**
- * 
- */
+	/**
+	 * Class accesses the Databse.
+	 */
 	public DBAccess() {
 
 	}
@@ -32,8 +57,10 @@ public class DBAccess {
 	 * doctor, or an empty string if the U/P combination is not found.
 	 * 
 	 * @param user
+	 *            user id
 	 * @param pass
-	 * @return ret
+	 *            passowrd for user
+	 * @return ret return something
 	 */
 	public final String login(String user, String pass) {
 		user = user.toLowerCase();
@@ -97,9 +124,10 @@ public class DBAccess {
 	 * symptoms associated with that illness.
 	 * 
 	 * @param ill
-	 * @return symps
+	 *            illness tag
+	 * @return symps symptoms tag
 	 */
-	public ArrayList<String> illSearch(String ill) {
+	public final ArrayList<String> illSearch(final String ill) {
 		ArrayList<String> symps = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -125,10 +153,13 @@ public class DBAccess {
 	 * illness table returns an arrayList of rejected symptoms.
 	 * 
 	 * @param ill
+	 *            illness
 	 * @param symps
-	 * @return reject
+	 *            symptoms
+	 * @return reject return something
 	 */
-	public ArrayList<String> addIll(String ill, ArrayList<String> symps) {
+	public final ArrayList<String> addIll(final String ill,
+			ArrayList<String> symps) {
 		ArrayList<String> reject = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -155,7 +186,7 @@ public class DBAccess {
 	 * 
 	 * @return ills
 	 */
-	public ArrayList<String> getIlls() {
+	public final ArrayList<String> getIlls() {
 		ArrayList<String> ills = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -176,19 +207,19 @@ public class DBAccess {
 	}
 
 	/**
-	 * return all the symptoms in the database
-	 * @param ill
+	 * return all the symptoms in the database.
+	 * 
+	 * 
 	 * @return symps
 	 */
-	public ArrayList<String> getSymps() {
+	public final ArrayList<String> getSymps() {
 		ArrayList<String> symps = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
-			ResultSet res = st
-					.executeQuery("SELECT * FROM symptoms;");
+			ResultSet res = st.executeQuery("SELECT * FROM symptoms;");
 			while (res.next()) {
 				String illness = res.getString("symptom_name");
 				symps.add(illness);
@@ -201,12 +232,13 @@ public class DBAccess {
 	}
 
 	/**
-	 * retrieves all the symptoms associated with the given illness
+	 * retrieves all the symptoms associated with the given illness.
+	 * 
 	 * @param illness
+	 *            input for illness
 	 * @return symptoms
 	 */
-	public ArrayList<String> getIllSymps(String illness)
-	{
+	public final ArrayList<String> getIllSymps(final String illness) {
 		ArrayList<String> symptoms = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -214,7 +246,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT Symptom FROM illness WHERE Illness_Name = '" + illness + "';");
+					.executeQuery("SELECT Symptom FROM illness WHERE Illness_Name = '"
+							+ illness + "';");
 			while (res.next()) {
 				String symp = res.getString("Symptom");
 				symptoms.add(symp);
@@ -225,9 +258,15 @@ public class DBAccess {
 		}
 		return symptoms;
 	}
-	
-	public boolean newSymptom(String symptom)
-	{
+
+	/**
+	 * add new symptom.
+	 * 
+	 * @param symptom
+	 *            input
+	 * @return valid return a vaild output
+	 */
+	public final boolean newSymptom(final String symptom) {
 		boolean valid = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -235,7 +274,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("INSERT INTO symptoms VALUES ('" + symptom + "');");
+				st.executeUpdate("INSERT INTO symptoms VALUES ('" + symptom
+						+ "');");
 				valid = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
 				valid = false;
@@ -246,16 +286,18 @@ public class DBAccess {
 		}
 		return valid;
 	}
-	
+
 	/**
 	 * Searches for the given illness and symptom then deletes the symptom,
 	 * returns true if successful.
 	 * 
 	 * @param ill
+	 *            illness input
 	 * @param symp
+	 *            symptom input
 	 * @return del
 	 */
-	public boolean delIllSymp(String ill, String symp) {
+	public final boolean delIllSymp(final String ill, final String symp) {
 		boolean del = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -281,9 +323,10 @@ public class DBAccess {
 	 * returns true if successful.
 	 * 
 	 * @param ill
+	 *            illness input
 	 * @return del
 	 */
-	public boolean delIll(String ill) {
+	public final boolean delIll(final String ill) {
 		boolean del = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -303,21 +346,20 @@ public class DBAccess {
 		}
 		return del;
 	}
-	
+
 	/**
-	 * returns an arraylist that contains the usernames of all the users
-	 * @return
+	 * returns an arraylist that contains the usernames of all the users.
+	 * 
+	 * @return names
 	 */
-	public ArrayList<String> getUsers()
-	{
+	public final ArrayList<String> getUsers() {
 		ArrayList<String> names = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
-			ResultSet res = st
-					.executeQuery("SELECT username FROM users;");
+			ResultSet res = st.executeQuery("SELECT username FROM users;");
 			while (res.next()) {
 				String name = res.getString("username");
 				names.add(name);
@@ -328,14 +370,15 @@ public class DBAccess {
 		}
 		return names;
 	}
-	
+
 	/**
-	 * returns the user type for the inputed username
+	 * returns the user type for the inputed username.
+	 * 
 	 * @param username
+	 *            user input
 	 * @return t
 	 */
-	public String getType(String username)
-	{
+	public final String getType(final String username) {
 		String t = "";
 		try {
 			Class.forName(driver).newInstance();
@@ -343,7 +386,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT type FROM users WHERE username = '" + username +"';");
+					.executeQuery("SELECT type FROM users WHERE username = '"
+							+ username + "';");
 			while (res.next()) {
 				String get = res.getString("type");
 				t = get;
@@ -354,14 +398,15 @@ public class DBAccess {
 		}
 		return t;
 	}
-	
+
 	/**
-	 * gets the id number for the given user using their username
+	 * gets the id number for the given user using their username.
+	 * 
 	 * @param username
+	 *            user input
 	 * @return id
 	 */
-	public int getID(String username)
-	{
+	public final int getID(final String username) {
 		int id = 0;
 		try {
 			Class.forName(driver).newInstance();
@@ -369,7 +414,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT userID FROM users WHERE username = '" + username +"';");
+					.executeQuery("SELECT userID FROM users WHERE username = '"
+							+ username + "';");
 			while (res.next()) {
 				id = res.getInt("userID");
 			}
@@ -379,14 +425,17 @@ public class DBAccess {
 		}
 		return id;
 	}
-	
+
 	/**
-	 * gets the id number for the given user using their first and last names
-	 * @param username
+	 * gets the id number for the given user using their first and last names.
+	 * 
+	 * @param fName
+	 *            first name
+	 * @param lName
+	 *            last name
 	 * @return id
 	 */
-	public int getID(String fName, String lName)
-	{
+	public final int getID(final String fName, final String lName) {
 		int id = 0;
 		try {
 			Class.forName(driver).newInstance();
@@ -394,7 +443,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fName +"' AND Lname = '" + lName.trim() +"';");
+					.executeQuery("SELECT pID FROM patient WHERE Fname = '"
+							+ fName + "' AND Lname = '" + lName.trim() + "';");
 			while (res.next()) {
 				id = res.getInt("pID");
 			}
@@ -404,15 +454,17 @@ public class DBAccess {
 		}
 		return id;
 	}
-	
+
 	/**
-	 * retrieves and return the first and last name of the user
-	 * @param username
+	 * retrieves and return the first and last name of the user.
+	 * 
+	 * @param id
+	 *            in
 	 * @param type
+	 *            in
 	 * @return name
 	 */
-	public String getName(int id, String type)
-	{
+	public final String getName(final int id, final String type) {
 		String fname = "";
 		String lname = "";
 		try {
@@ -421,17 +473,15 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = null;
-			if(type.equals("Admin") || type.equals("A"))
-			{
-				res = st.executeQuery("SELECT Fname, Lname FROM admin WHERE aID = " + id +";");
-			}
-			else if(type.equals("Doctor") || type.equals("D"))
-			{
-				res = st.executeQuery("SELECT Fname, Lname FROM doctor WHERE dID = " + id +";");
-			}
-			else if(type.equals("Patient") || type.equals("P"))
-			{
-				res = st.executeQuery("SELECT Fname, Lname FROM patient WHERE pID = " + id +";");
+			if (type.equals("Admin") || type.equals("A")) {
+				res = st.executeQuery("SELECT Fname, Lname FROM admin WHERE aID = "
+						+ id + ";");
+			} else if (type.equals("Doctor") || type.equals("D")) {
+				res = st.executeQuery("SELECT Fname, Lname FROM doctor WHERE dID = "
+						+ id + ";");
+			} else if (type.equals("Patient") || type.equals("P")) {
+				res = st.executeQuery("SELECT Fname, Lname FROM patient WHERE pID = "
+						+ id + ";");
 			}
 			while (res.next()) {
 				fname = res.getString("Fname");
@@ -443,14 +493,15 @@ public class DBAccess {
 		}
 		return fname + " " + lname;
 	}
-	
+
 	/**
-	 * gets the password for the user with the given id
+	 * gets the password for the user with the given id.
+	 * 
 	 * @param id
+	 *            id input
 	 * @return pass
 	 */
-	public String getPass(int id)
-	{
+	public final String getPass(final int id) {
 		String pass = "";
 		try {
 			Class.forName(driver).newInstance();
@@ -458,7 +509,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT password FROM users WHERE userID = " + id +";");
+					.executeQuery("SELECT password FROM users WHERE userID = "
+							+ id + ";");
 			while (res.next()) {
 				pass = res.getString("password");
 			}
@@ -468,14 +520,15 @@ public class DBAccess {
 		}
 		return pass;
 	}
-	
+
 	/**
-	 * gets the specialization for the given doctor
+	 * gets the specialization for the given doctor.
+	 * 
 	 * @param id
-	 * @return
+	 *            id input
+	 * @return spec
 	 */
-	public String getSpec(int id)
-	{
+	public final String getSpec(final int id) {
 		String spec = "";
 		try {
 			Class.forName(driver).newInstance();
@@ -483,7 +536,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT specialization FROM doctor WHERE dID = " + id +";");
+					.executeQuery("SELECT specialization FROM doctor WHERE dID = "
+							+ id + ";");
 			while (res.next()) {
 				spec = res.getString("specialization");
 			}
@@ -493,14 +547,16 @@ public class DBAccess {
 		}
 		return spec;
 	}
-	
+
 	/**
-	 * retrieves the patient objects of all the patients that see the desired doctor
+	 * retrieves the patient objects of all the patients that see the desired
+	 * doctor.
+	 * 
 	 * @param id
+	 *            input id
 	 * @return patients
 	 */
-	public ArrayList<Patient> getPatients(int id)
-	{
+	public final ArrayList<Patient> getPatients(final int id) {
 		ArrayList<Integer> pIds = new ArrayList<Integer>();
 		ArrayList<Patient> pats = new ArrayList<Patient>();
 		try {
@@ -509,7 +565,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT patientID FROM doctor_patient WHERE doctorID = " + id +";");
+					.executeQuery("SELECT patientID FROM doctor_patient WHERE doctorID = "
+							+ id + ";");
 			while (res.next()) {
 				int i = res.getInt("patientID");
 				pIds.add(i);
@@ -518,15 +575,15 @@ public class DBAccess {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		for(int x = 0; x < pIds.size(); x++)
-		{
+		for (int x = 0; x < pIds.size(); x++) {
 			try {
 				Class.forName(driver).newInstance();
 				Connection conn = DriverManager.getConnection(url + dbName,
 						userName, password);
 				Statement st = conn.createStatement();
 				ResultSet res = st
-						.executeQuery("SELECT username FROM users WHERE userID = " + pIds.get(x) + ";");
+						.executeQuery("SELECT username FROM users WHERE userID = "
+								+ pIds.get(x) + ";");
 				while (res.next()) {
 					pats.add(getPatOb(res.getString("username")));
 				}
@@ -537,14 +594,16 @@ public class DBAccess {
 		}
 		return pats;
 	}
-	
+
 	/**
-	 * retrieves the patient objects of all the patients that the given doctor does not see
+	 * retrieves the patient objects of all the patients that the given doctor
+	 * does not see.
+	 * 
 	 * @param id
+	 *            in input
 	 * @return patients
 	 */
-	public ArrayList<Patient> getPatientsLess(int id)
-	{
+	public final ArrayList<Patient> getPatientsLess(final int id) {
 		ArrayList<Patient> patients = new ArrayList<Patient>();
 		try {
 			Class.forName(driver).newInstance();
@@ -552,7 +611,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT username FROM illnessdb.users WHERE userID NOT IN(SELECT patientID from doctor_patient WHERE doctorID = " + id + ") AND type = 'P';");
+					.executeQuery("SELECT username FROM illnessdb.users WHERE userID NOT IN(SELECT patientID from doctor_patient WHERE doctorID = "
+							+ id + ") AND type = 'P';");
 			while (res.next()) {
 				Patient p = getPatOb(res.getString("username"));
 				patients.add(p);
@@ -563,14 +623,15 @@ public class DBAccess {
 		}
 		return patients;
 	}
-	
+
 	/**
-	 * returns the given patients height data
+	 * returns the given patients height data.
+	 * 
 	 * @param id
-	 * @return
+	 *            id input
+	 * @return h
 	 */
-	public int getHeight(int id)
-	{
+	public final int getHeight(final int id) {
 		int h = 0;
 		try {
 			Class.forName(driver).newInstance();
@@ -578,7 +639,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT height FROM patient WHERE pID = " + id +";");
+					.executeQuery("SELECT height FROM patient WHERE pID = "
+							+ id + ";");
 			while (res.next()) {
 				h = res.getInt("height");
 			}
@@ -588,14 +650,15 @@ public class DBAccess {
 		}
 		return h;
 	}
-	
+
 	/**
-	 * return the given patients weight data
+	 * return the given patients weight data.
+	 * 
 	 * @param id
-	 * @return
+	 *            id input
+	 * @return w
 	 */
-	public int getWeight(int id)
-	{
+	public final int getWeight(final int id) {
 		int w = 0;
 		try {
 			Class.forName(driver).newInstance();
@@ -603,7 +666,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT weight FROM patient WHERE pID = " + id +";");
+					.executeQuery("SELECT weight FROM patient WHERE pID = "
+							+ id + ";");
 			while (res.next()) {
 				w = res.getInt("weight");
 			}
@@ -613,9 +677,15 @@ public class DBAccess {
 		}
 		return w;
 	}
-	
-	public String getInsurance(int id)
-	{
+
+	/**
+	 * get insurance.
+	 * 
+	 * @param id
+	 *            id input
+	 * @return in
+	 */
+	public final String getInsurance(final int id) {
 		String in = "";
 		try {
 			Class.forName(driver).newInstance();
@@ -623,7 +693,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT insurance FROM patient WHERE pID = " + id +";");
+					.executeQuery("SELECT insurance FROM patient WHERE pID = "
+							+ id + ";");
 			while (res.next()) {
 				in = res.getString("insurance");
 			}
@@ -633,25 +704,38 @@ public class DBAccess {
 		}
 		return in;
 	}
-	
+
 	/**
-	 * Adds a user to the database with the given info, determines the user type and first adds them
-	 * to the user table then to the table corresponding to their type. Type also dictates
-	 * which of the parameters are used in the inserts.
+	 * Adds a user to the database with the given info, determines the user type
+	 * and first adds them to the user table then to the table corresponding to
+	 * their type. Type also dictates which of the parameters are used in the
+	 * inserts.
+	 * 
 	 * @param type
+	 *            type
 	 * @param id
+	 *            id
 	 * @param fName
+	 *            first name
 	 * @param lName
+	 *            last name
 	 * @param h
+	 *            height
 	 * @param w
+	 *            weight
 	 * @param insur
+	 *            insurance
 	 * @param spec
+	 *            specs
 	 * @param un
+	 *            un
 	 * @param pass
+	 *            password
 	 * @return add
 	 */
-	public boolean addUser(String type, int id, String fName, String lName, int h, int w, String insur, String spec, String un, String pass)
-	{
+	public boolean addUser(final String type, final int id, final String fName,
+			final String lName, final int h, final int w, final String insur,
+			final String spec, final String un, String pass) {
 		boolean add = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -659,68 +743,68 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				//"INSERT INTO illness VALUES('" + ill + "', '" + symps.get(i) + "');"
-				
-				st.executeUpdate("INSERT INTO users VALUES('" + id +"', '" + un + "', '" + pass + "', '" + type + "');" );
+				// "INSERT INTO illness VALUES('" + ill + "', '" + symps.get(i)
+				// + "');"
+
+				st.executeUpdate("INSERT INTO users VALUES('" + id + "', '"
+						+ un + "', '" + pass + "', '" + type + "');");
 				add = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				add = false;//failed to insert
+				add = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(add)
-		{
-			if(type.equals("A"))
-			{
+		if (add) {
+			if (type.equals("A")) {
 				try {
 					Class.forName(driver).newInstance();
 					Connection conn = DriverManager.getConnection(url + dbName,
 							userName, password);
 					Statement st = conn.createStatement();
 					try {
-						st.executeUpdate("INSERT INTO admin VALUES('" + id +"', '" + fName + "', '" + lName + "');" );
+						st.executeUpdate("INSERT INTO admin VALUES('" + id
+								+ "', '" + fName + "', '" + lName + "');");
 						add = true;
 					} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-						add = false;//failed to insert
+						add = false; // failed to insert
 					}
 					conn.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-			else if(type.equals("D"))
-			{
+			} else if (type.equals("D")) {
 				try {
 					Class.forName(driver).newInstance();
 					Connection conn = DriverManager.getConnection(url + dbName,
 							userName, password);
 					Statement st = conn.createStatement();
 					try {
-						st.executeUpdate("INSERT INTO doctor VALUES('" + id +"', '" + spec +"', '" + fName + "', '" + lName + "');" );
+						st.executeUpdate("INSERT INTO doctor VALUES('" + id
+								+ "', '" + spec + "', '" + fName + "', '"
+								+ lName + "');");
 						add = true;
 					} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-						add = false;//failed to insert
+						add = false; // failed to insert
 					}
 					conn.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-			}
-			else if(type.equals("P"))
-			{
+			} else if (type.equals("P")) {
 				try {
 					Class.forName(driver).newInstance();
 					Connection conn = DriverManager.getConnection(url + dbName,
 							userName, password);
 					Statement st = conn.createStatement();
 					try {
-						st.executeUpdate("INSERT INTO patient VALUES('" + id +"', '" + fName + "', '" + lName + "', '" 
-								+ h + "', '" + w + "', '" + insur + "');");
+						st.executeUpdate("INSERT INTO patient VALUES('" + id
+								+ "', '" + fName + "', '" + lName + "', '" + h
+								+ "', '" + w + "', '" + insur + "');");
 						add = true;
 					} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-						add = false;//failed to insert
+						add = false; // failed to insert
 					}
 					conn.close();
 				} catch (Exception e) {
@@ -730,14 +814,16 @@ public class DBAccess {
 		}
 		return add;
 	}
-	
+
 	/**
-	 * delete the specified user from the users table(which will cascade to the other appropriate tables)
+	 * delete the specified user from the users table(which will cascade to the
+	 * other appropriate tables.
+	 * 
 	 * @param username
+	 *            username tag
 	 * @return del
 	 */
-	public boolean delUser(String username)
-	{
+	public final boolean delUser(final String username) {
 		boolean del = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -745,10 +831,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("DELETE FROM users WHERE username = '" + username +"';");
+				st.executeUpdate("DELETE FROM users WHERE username = '"
+						+ username + "';");
 				del = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				del = false;//failed to insert
+				del = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -756,14 +843,15 @@ public class DBAccess {
 		}
 		return del;
 	}
-	
+
 	/**
-	 * returns the symptoms associated with the given patient
+	 * returns the symptoms associated with the given patient.
+	 * 
 	 * @param id
+	 *            id input
 	 * @return symptoms
 	 */
-	public ArrayList<String> getPatSymps(int id)
-	{
+	public ArrayList<String> getPatSymps(int id) {
 		ArrayList<String> symptoms = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -771,7 +859,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT symp from patient_symptom WHERE patID = " + id + ";");
+					.executeQuery("SELECT symp from patient_symptom WHERE patID = "
+							+ id + ";");
 			while (res.next()) {
 				symptoms.add(res.getString("symp"));
 			}
@@ -781,14 +870,15 @@ public class DBAccess {
 		}
 		return symptoms;
 	}
-	
+
 	/**
-	 * returns the names of the doctors that see the given patient
+	 * returns the names of the doctors that see the given patient.
+	 * 
 	 * @param id
+	 *            id inout
 	 * @return docs
 	 */
-	public ArrayList<String> getPatDocs(int id)
-	{
+	public final ArrayList<String> getPatDocs(final int id) {
 		ArrayList<String> docs = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -796,7 +886,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT Fname, Lname FROM illnessdb.doctor WHERE dID IN(SELECT doctorID from doctor_patient WHERE patientID = " + id +");");
+					.executeQuery("SELECT Fname, Lname FROM illnessdb.doctor WHERE dID IN(SELECT doctorID from doctor_patient WHERE patientID = "
+							+ id + ");");
 			while (res.next()) {
 				String fname = res.getString("Fname");
 				String lname = res.getString("Lname");
@@ -808,14 +899,15 @@ public class DBAccess {
 		}
 		return docs;
 	}
-	
+
 	/**
-	 * returns the info about the given patient
+	 * returns the info about the given patient.
+	 * 
 	 * @param id
+	 *            input
 	 * @return String info
 	 */
-	public String getPatientInfo(int id)
-	{
+	public final String getPatientInfo(final int id) {
 		String info = "";
 		ArrayList<String> symptoms = new ArrayList<String>();
 		try {
@@ -824,7 +916,8 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT * FROM patient WHERE pID = " + id + ";");
+					.executeQuery("SELECT * FROM patient WHERE pID = " + id
+							+ ";");
 			while (res.next()) {
 				info += "Height: " + res.getString("height") + "\n";
 				info += "Weight: " + res.getString("weight") + "\n";
@@ -834,14 +927,15 @@ public class DBAccess {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		info += "Symptoms: \n"; 
+		info += "Symptoms: \n";
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = st
-					.executeQuery("SELECT symp FROM patient_symptom WHERE patID = " + id + ";");
+					.executeQuery("SELECT symp FROM patient_symptom WHERE patID = "
+							+ id + ";");
 			while (res.next()) {
 				info += "   " + res.getString("symp") + "\n";
 			}
@@ -849,17 +943,21 @@ public class DBAccess {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return info;
 	}
-	
+
 	/**
-	 * attempts to remove the given patient from the list of patients associated to the given doctor
-	 * @param id
+	 * attempts to remove the given patient from the list of patients associated
+	 * to the given doctor.
+	 * 
+	 * @param dID
+	 *            input
+	 * @param pID
+	 *            inout
 	 * @return boolean removed
 	 */
-	public boolean removePatient(int dID, int pID)
-	{
+	public final boolean removePatient(final int dID, final int pID) {
 		boolean removed = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -867,10 +965,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("DELETE FROM doctor_patient WHERE doctorID = " + dID + " AND patientID = " + pID + ";");
+				st.executeUpdate("DELETE FROM doctor_patient WHERE doctorID = "
+						+ dID + " AND patientID = " + pID + ";");
 				removed = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				removed = false;//failed to insert
+				removed = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -878,14 +977,17 @@ public class DBAccess {
 		}
 		return removed;
 	}
-	
+
 	/**
-	 * adds the selected patient to the active doctor
-	 * @param id
-	 * @return
+	 * adds the selected patient to the active doctor.
+	 * 
+	 * @param dID
+	 *            input
+	 * @param pID
+	 *            inout
+	 * @return added
 	 */
-	public boolean addPatient(int dID, int pID)
-	{
+	public final boolean addPatient(final int dID, final int pID) {
 		boolean added = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -893,10 +995,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("INSERT INTO doctor_patient VALUES (" +dID+ ", " + pID + ");");
+				st.executeUpdate("INSERT INTO doctor_patient VALUES (" + dID
+						+ ", " + pID + ");");
 				added = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				added = false;//failed to insert
+				added = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -904,15 +1007,17 @@ public class DBAccess {
 		}
 		return added;
 	}
-	
+
 	/**
-	 * adds the given symptom to the given patient
+	 * adds the given symptom to the given patient.
+	 * 
 	 * @param id
+	 *            inout
 	 * @param symptom
+	 *            inout
 	 * @return boolean removed
 	 */
-	public boolean removeSymptom(int id, String symptom)
-	{
+	public final boolean removeSymptom(final int id, final String symptom) {
 		boolean removed = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -920,10 +1025,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("DELETE FROM patient_symptom WHERE patID = " + id + " AND symp = '" + symptom + "';");
+				st.executeUpdate("DELETE FROM patient_symptom WHERE patID = "
+						+ id + " AND symp = '" + symptom + "';");
 				removed = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				removed = false;//failed to insert
+				removed = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -931,15 +1037,17 @@ public class DBAccess {
 		}
 		return removed;
 	}
-	
+
 	/**
-	 * assigns the given symptom to the given patient
+	 * assigns the given symptom to the given patient.
+	 * 
 	 * @param id
+	 *            input
 	 * @param symptom
+	 *            input
 	 * @return boolean added
 	 */
-	public boolean giveSymptom(int id, String symptom)
-	{
+	public final boolean giveSymptom(final int id, final String symptom) {
 		boolean added = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -947,10 +1055,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("INSERT INTO patient_symptom VALUES (" + id + ", '" + symptom + "');");
+				st.executeUpdate("INSERT INTO patient_symptom VALUES (" + id
+						+ ", '" + symptom + "');");
 				added = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				added = false;//failed to insert
+				added = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -958,15 +1067,17 @@ public class DBAccess {
 		}
 		return added;
 	}
-	
+
 	/**
-	 * returns the list of names of people that have sent messages to the user 
+	 * returns the list of names of people that have sent messages to the user.
+	 * 
 	 * @param id
+	 *            input
 	 * @param type
+	 *            input
 	 * @return from
 	 */
-	public ArrayList<String> getMessages(int id, String type)
-	{
+	public final ArrayList<String> getMessages(final int id, final String type) {
 		ArrayList<String> from = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -974,15 +1085,12 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = null;
-			if(type.equals("P"))
-			{
-				res = st
-						.executeQuery("SELECT Lname, Fname FROM doctor WHERE dID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
-			}
-			else if(type.equals("D"))
-			{
-				res = st
-					.executeQuery("SELECT Lname, Fname FROM patient WHERE pID IN(SELECT fromID FROM message WHERE toID = " + id + ");");
+			if (type.equals("P")) {
+				res = st.executeQuery("SELECT Lname, Fname FROM doctor WHERE dID IN(SELECT fromID FROM message WHERE toID = "
+						+ id + ");");
+			} else if (type.equals("D")) {
+				res = st.executeQuery("SELECT Lname, Fname FROM patient WHERE pID IN(SELECT fromID FROM message WHERE toID = "
+						+ id + ");");
 			}
 			while (res.next()) {
 				from.add(res.getString("Fname") + " " + res.getString("Lname"));
@@ -993,15 +1101,20 @@ public class DBAccess {
 		}
 		return from;
 	}
-	
+
 	/**
-	 * gets the text of the message sent from the 'name' to toID
+	 * gets the text of the message sent from the 'name' to toID.
+	 * 
 	 * @param name
+	 *            input
 	 * @param userType
-	 * @return String text
+	 *            input
+	 * @param toID
+	 *            input
+	 * @return
 	 */
-	public String getText(String name, String userType, int toID)
-	{
+	public final String getText(final String name, final String userType,
+			final int toID) {
 		String text = "";
 		String fname = name.substring(0, name.indexOf(" "));
 		String lname = name.substring(name.indexOf(" ") + 1, name.length());
@@ -1011,15 +1124,20 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			ResultSet res = null;
-			if(userType.equals("P"))
-			{
-				res = st
-						.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
-			}
-			else if(userType.equals("D"))
-			{
-				res = st
-					.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
+			if (userType.equals("P")) {
+				res = st.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '"
+						+ fname
+						+ "' AND Lname = '"
+						+ lname
+						+ "') AND toID = "
+						+ toID + ";");
+			} else if (userType.equals("D")) {
+				res = st.executeQuery("SELECT text FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '"
+						+ fname
+						+ "' AND Lname = '"
+						+ lname
+						+ "') AND toID = "
+						+ toID + ";");
 			}
 			while (res.next()) {
 				text = res.getString("text");
@@ -1030,15 +1148,20 @@ public class DBAccess {
 		}
 		return text;
 	}
-	
+
 	/**
-	 * deletes the message from name to toID 
+	 * deletes the message from name to toID.
+	 * 
 	 * @param name
+	 *            input
 	 * @param userType
-	 * @return boolean del
+	 *            input
+	 * @param toID
+	 *            input
+	 * @return del
 	 */
-	public boolean delMessage(String name, String userType, int toID)
-	{
+	public final boolean delMessage(final String name, final String userType,
+			final int toID) {
 		boolean del = false;
 		String fname = name.substring(0, name.indexOf(" "));
 		String lname = name.substring(name.indexOf(" ") + 1, name.length());
@@ -1048,17 +1171,22 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				if(userType.equals("P"))
-				{
-					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "') AND toID = " + toID + ";");
-				}
-				else if(userType.equals("D"))
-				{
-					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "' AND toID = " + toID + ");");
+				if (userType.equals("P")) {
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT dID FROM doctor WHERE Fname = '"
+							+ fname
+							+ "' AND Lname = '"
+							+ lname
+							+ "') AND toID = " + toID + ";");
+				} else if (userType.equals("D")) {
+					st.executeUpdate("DELETE FROM message WHERE fromID IN(SELECT pID FROM patient WHERE Fname = '"
+							+ fname
+							+ "' AND Lname = '"
+							+ lname
+							+ "' AND toID = " + toID + ");");
 				}
 				del = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				del = false;//failed to insert
+				del = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -1066,17 +1194,22 @@ public class DBAccess {
 		}
 		return del;
 	}
-	
+
 	/**
-	 * add the message to the message table
+	 * add the message to the message table.
+	 * 
 	 * @param from
+	 *            input
 	 * @param to
+	 *            input
 	 * @param text
+	 *            input
 	 * @param userType
+	 *            input
 	 * @return sent
 	 */
-	public boolean sendMessage(int from, String to, String text, String userType)
-	{
+	public final boolean sendMessage(final int from, final String to,
+			final String text, final String userType) {
 		boolean sent = false;
 		String fname = to.substring(0, to.indexOf(" "));
 		String lname = to.substring(to.indexOf(" ") + 1, to.length());
@@ -1087,27 +1220,28 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				if(userType.equals("D"))
-				{
-					ResultSet res = st.executeQuery("SELECT pID FROM patient WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
-					while(res.next())
-					{
+				if (userType.equals("D")) {
+					ResultSet res = st
+							.executeQuery("SELECT pID FROM patient WHERE Fname = '"
+									+ fname + "' AND Lname = '" + lname + "';");
+					while (res.next()) {
 						toID = res.getInt("pID");
 					}
-					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
-				}
-				else 	if(userType.equals("P"))
-				{
-					ResultSet res = st.executeQuery("SELECT dID FROM doctor WHERE Fname = '" + fname + "' AND Lname = '" + lname + "';");
-					while(res.next())
-					{
+					st.executeUpdate("INSERT INTO message VALUES('" + from
+							+ "', '" + toID + "', '" + text + "')");
+				} else if (userType.equals("P")) {
+					ResultSet res = st
+							.executeQuery("SELECT dID FROM doctor WHERE Fname = '"
+									+ fname + "' AND Lname = '" + lname + "';");
+					while (res.next()) {
 						toID = res.getInt("dID");
 					}
-					st.executeUpdate("INSERT INTO message VALUES('" + from + "', '" + toID + "', '" + text + "')");
+					st.executeUpdate("INSERT INTO message VALUES('" + from
+							+ "', '" + toID + "', '" + text + "')");
 				}
 				sent = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				sent = false;//failed to insert
+				sent = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -1115,13 +1249,15 @@ public class DBAccess {
 		}
 		return sent;
 	}
+
 	/**
+	 * get Doctor.
 	 * 
 	 * @param username
-	 * @return
+	 *            inout
+	 * @return d
 	 */
-	public Doctor getDocOb(String username)
-	{
+	public final Doctor getDocOb(final String username) {
 		Doctor d = null;
 		int userID = getID(username);
 		String name = getName(userID, "D");
@@ -1131,27 +1267,32 @@ public class DBAccess {
 		d = new Doctor(userID, fName, lName, spec);
 		return d;
 	}
+
 	/**
+	 * get Patirn.
 	 * 
 	 * @param username
-	 * @return
+	 *            inout
+	 * @return p
 	 */
-	public Patient getPatOb(String username)
-	{
+	public final Patient getPatOb(final String username) {
 		Patient p = null;
 		int userID = getID(username);
 		String patName = getName(userID, "P");
 		String fName = patName.substring(0, patName.indexOf(" "));
-		String lName = patName.substring(patName.indexOf(" "), patName.length());
-		p = new Patient(userID, fName, lName, getHeight(userID), getWeight(userID), getInsurance(userID));
+		String lName = patName
+				.substring(patName.indexOf(" "), patName.length());
+		p = new Patient(userID, fName, lName, getHeight(userID),
+				getWeight(userID), getInsurance(userID));
 		return p;
 	}
+
 	/**
+	 * Get all medications.
 	 * 
-	 * @return
+	 * @return meds
 	 */
-	public ArrayList<String> getAllMeds()
-	{
+	public final ArrayList<String> getAllMeds() {
 		ArrayList<String> meds = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
@@ -1169,20 +1310,24 @@ public class DBAccess {
 		}
 		return meds;
 	}
+
 	/**
+	 * get Patient Medication.
 	 * 
 	 * @param id
-	 * @return
+	 *            input
+	 * @return meds
 	 */
-	public ArrayList<String> getPatMeds(int id)
-	{
+	public final ArrayList<String> getPatMeds(final int id) {
 		ArrayList<String> meds = new ArrayList<String>();
 		try {
 			Class.forName(driver).newInstance();
 			Connection conn = DriverManager.getConnection(url + dbName,
 					userName, password);
 			Statement st = conn.createStatement();
-			ResultSet res = st.executeQuery("Select med from med_pat where pat = " + id + ";");
+			ResultSet res = st
+					.executeQuery("Select med from med_pat where pat = " + id
+							+ ";");
 			while (res.next()) {
 				String m = res.getString("med");
 				meds.add(m);
@@ -1193,14 +1338,17 @@ public class DBAccess {
 		}
 		return meds;
 	}
+
 	/**
+	 * prescribe medication.
 	 * 
 	 * @param med
+	 *            medications
 	 * @param pID
-	 * @return
+	 *            patient ID
+	 * @return pre
 	 */
-	public boolean prescribeMed(String med, int pID)
-	{
+	public final boolean prescribeMed(final String med, final int pID) {
 		boolean pre = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -1208,10 +1356,11 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				st.executeUpdate("INSERT INTO med_pat VALUES ('" + med + "', " + pID + ");");
+				st.executeUpdate("INSERT INTO med_pat VALUES ('" + med + "', "
+						+ pID + ");");
 				pre = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				pre = false;//failed to insert
+				pre = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
@@ -1219,42 +1368,20 @@ public class DBAccess {
 		}
 		return pre;
 	}
-/**
-	 * Add data of appiontment
-	 * @param date
-	 * @param pID
-	 * @param dID
-	 * @return
-	 */
-	public boolean addappointment(String date, int pID , int dID){
-		boolean pre = false;
-		try {
-			Class.forName(driver).newInstance();
-			Connection conn = DriverManager.getConnection(url + dbName,
-					userName, password);
-			Statement st = conn.createStatement();
-			try {
-				String sql = "UPDATE Doctor_Patient " + "SET appointment = date WHERE patientID = pID && doctorID = dID ";
-				st.executeUpdate(sql);
-				pre = true;
-			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				pre = false;//failed to insert
-			}
-			conn.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return pre;
-		
-	}
+
 	/**
-	 * delete data of appiontment 
+	 * Add data of appiontment.
+	 * 
 	 * @param date
+	 *            date time
 	 * @param pID
+	 *            patinet ID
 	 * @param dID
-	 * @return
+	 *            doctor Id
+	 * @return pre
 	 */
-	public boolean delappointment(String date, int pID , int dID){
+	public final boolean addappointment(final String date, final int pID,
+			final int dID) {
 		boolean pre = false;
 		try {
 			Class.forName(driver).newInstance();
@@ -1262,18 +1389,54 @@ public class DBAccess {
 					userName, password);
 			Statement st = conn.createStatement();
 			try {
-				String sql = "U Doctor_Patient " + "SET appointment = null WHERE patientID = pID && doctorID = dID && appointment = date ";
+				String sql = "UPDATE Doctor_Patient "
+						+ "SET appointment = date WHERE patientID = pID && doctorID = dID ";
 				st.executeUpdate(sql);
 				pre = true;
 			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
-				pre = false;//failed to insert
+				pre = false; // failed to insert
 			}
 			conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return pre;
-		
+
 	}
-	
+
+	/**
+	 * delete data of appiontment.
+	 * 
+	 * @param date
+	 *            date
+	 * @param pID
+	 *            patient ID
+	 * @param dID
+	 *            doctor ID
+	 * @return pre
+	 */
+	public final boolean delappointment(final String date, final int pID,
+			final int dID) {
+		boolean pre = false;
+		try {
+			Class.forName(driver).newInstance();
+			Connection conn = DriverManager.getConnection(url + dbName,
+					userName, password);
+			Statement st = conn.createStatement();
+			try {
+				String sql = "U Doctor_Patient "
+						+ "SET appointment = null WHERE patientID = pID && doctorID = dID && appointment = date ";
+				st.executeUpdate(sql);
+				pre = true;
+			} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException err) {
+				pre = false; // failed to insert
+			}
+			conn.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pre;
+
+	}
+
 }
