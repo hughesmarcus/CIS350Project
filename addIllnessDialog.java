@@ -24,12 +24,32 @@ import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-
+/**
+ * Illness dialog box that extends JDialog in order to
+ * inform the user of illness realted aspects.
+ */
 public class addIllnessDialog extends JDialog {
 
+	/**
+	 * JPanel of content that uses illness instances.
+	 */
 	private final JPanel contentPanel = new JPanel();
+	
+	/**
+	 * Text field used for illness instances.
+	 */
 	private JTextField nameField;
+	
+	/**
+	 * db used to access our DBAccess class so that way
+	 * all aspects of our program are in sync.
+	 */
 	private DBAccess db;
+	
+	/**
+	 * Array list of new symptoms that are added in
+	 * whenever a new illness is instanciated.
+	 */
 	private ArrayList<String> newSymptoms;
 
 	/**
@@ -41,7 +61,6 @@ public class addIllnessDialog extends JDialog {
 		setVisible(true);
 		setFont(new Font("Dialog", Font.PLAIN, 12));
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\silas\\Desktop\\Java\\MediApp2\\mediicon.jpg"));//comment this out
-		//setIconImage(Toolkit.getDefaultToolkit().getImage(""));//set your path to the mediicon
 		setTitle("Add Illness");
 		setAlwaysOnTop(true);
 		setBounds(100, 100, 452, 300);
@@ -66,11 +85,10 @@ public class addIllnessDialog extends JDialog {
 		lblSymptoms.setBounds(10, 60, 70, 20);
 		contentPanel.add(lblSymptoms);
 		
-		JComboBox sympsBox = new JComboBox();
+		final JComboBox sympsBox = new JComboBox();
 		//fill combo box with symptoms
 		ArrayList<String> symptoms = db.getSymps();
-		for(int i = 0; i < symptoms.size(); i++)
-		{
+		for (int i = 0; i < symptoms.size(); i++) {
 			sympsBox.addItem(symptoms.get(i));	
 		}
 		sympsBox.setBounds(240, 31, 170, 20);
@@ -81,25 +99,22 @@ public class addIllnessDialog extends JDialog {
 		sympsPane.setBounds(90, 60, 115, 160);
 		contentPanel.add(sympsPane);
 		
-		JTextArea sympsArea = new JTextArea();
+		final JTextArea sympsArea = new JTextArea();
 		sympsArea.setEnabled(false);
 		sympsArea.setEditable(false);
 		sympsPane.setViewportView(sympsArea);
 		
 		JButton btnAddSymptom = new JButton("Add Symptom");
 		btnAddSymptom.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(final ActionEvent e) {
 				String addSymp = (String) sympsBox.getSelectedItem();
 				boolean in = false;
-				for(int i = 0; i < newSymptoms.size(); i++)
-				{
-					if(newSymptoms.get(i).equals(addSymp))
-					{
+				for (int i = 0; i < newSymptoms.size(); i++) {
+					if (newSymptoms.get(i).equals(addSymp)){
 						in = true;
 					}
 				}
-				if(!in)
-				{
+				if (!in) {
 					sympsArea.append(addSymp + "\n");
 					newSymptoms.add(addSymp);
 				}
@@ -115,7 +130,7 @@ public class addIllnessDialog extends JDialog {
 			{
 				JButton okButton = new JButton("Add");
 				okButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
+					public void actionPerformed(final ActionEvent arg0) {
 						String illName = nameField.getText();
 						ArrayList<String> add = db.addIll(illName, newSymptoms);
 						MedGui.updateIllnessList();
@@ -132,7 +147,7 @@ public class addIllnessDialog extends JDialog {
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
+					public void actionPerformed(final ActionEvent e) {
 						nameField.setText("");
 						sympsArea.setText("");
 						setVisible(false);
