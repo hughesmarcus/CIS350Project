@@ -12,28 +12,54 @@ import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 
 /**
- * 
- * @author
+ * Class that deals with all the dialog the user sees when loging into the
+ * database.
+ * @author Silas
  *
  */
 public class LoginDialog extends JDialog {
+	
+	/**
+	 * JPanel used to hold the content of all the login information.
+	 */
 	private final JPanel contentPanel = new JPanel();
+	
+	/**
+	 * textfield that is used to hold the text info for login. 
+	 */
 	private JTextField textField;
+	
+	/**
+	 * password field that holds the encrypted password for the 
+	 * user that is loging into the system.
+	 */
 	private JPasswordField passwordField;
+	
+	/**
+	 * DB instance that keeps track of the updated field
+	 * and allows the entire program to stay in sync.
+	 */
 	DBAccess DB;
+	
+	/**
+	 * string that holds the username trying to login.
+	 */
 	private String userName;
 
-	public String getUsername()
-	{
+	/**
+	 * Method that gets the username trying to login.
+	 * @return userName the name of the user loging into the system.
+	 */
+	public final String getUsername() {
 		return userName;
 	}
 	
 	/**
 	 * Launch the application.
 	 * 
-	 * @param args
+	 * @param args the arguements for the method to run.
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		try {
 			LoginDialog dialog = new LoginDialog();
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -110,14 +136,12 @@ public class LoginDialog extends JDialog {
 					MedGui frame = new MedGui(type, user);
 					frame.showFrame();
 					setVisible(false);
-				}
-				else if(type.equals("A")){
+				} else if (type.equals("A")) {
 					//display main frame in admin view
 					MedGui frame = new MedGui(type, user);
 					frame.showFrame();
 					setVisible(false);
-				}
-				else {
+				} else {
 					// display wrong username/password
 					lblInvalid.setText("Invalid username/password combination");
 				}
